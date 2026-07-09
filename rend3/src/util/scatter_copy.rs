@@ -153,9 +153,9 @@ mod test {
 
     impl TestContext {
         fn new() -> Option<Self> {
-            let backends = wgpu::util::backend_bits_from_env().unwrap_or(wgpu::Backends::all());
+            let backends = wgpu::Backends::from_env().unwrap_or(wgpu::Backends::all());
             let instance =
-                wgpu::Instance::new(wgpu::InstanceDescriptor { backends, ..wgpu::InstanceDescriptor::default() });
+                wgpu::Instance::new(&wgpu::InstanceDescriptor { backends, ..wgpu::InstanceDescriptor::default() });
             let adapter = pollster::block_on(wgpu::util::initialize_adapter_from_env_or_default(&instance, None))?;
             let (device, queue) = pollster::block_on(adapter.request_device(
                 &wgpu::DeviceDescriptor {

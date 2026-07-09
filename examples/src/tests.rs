@@ -21,7 +21,7 @@ pub async fn test_app<A: App<T>, T: 'static>(mut config: TestConfiguration<A>) -
         rend3_test::no_gpu_return!(config.app.create_iad().await).context("InstanceAdapterDevice creation failed")?;
 
     let renderer =
-        rend3::Renderer::new(iad.clone(), A::HANDEDNESS, Some(config.size.x as f32 / config.size.y as f32)).unwrap();
+        rend3::Renderer::new(iad.clone(), config.app.get_handedness(), Some(config.size.x as f32 / config.size.y as f32)).unwrap();
 
     let mut spp = rend3::ShaderPreProcessor::new();
     rend3_routine::builtin_shaders(&mut spp);
