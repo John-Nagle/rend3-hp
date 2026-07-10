@@ -714,7 +714,7 @@ pub fn main() {
 #[rend3_test::test_attr]
 async fn default_scene() {
     let mut app = SceneViewer::default();
-    app.file_to_load = Some("src/scene_viewer/resources/default-scene/scene.gltf".into());
+    app.file_to_load = Some("src/scene_viewer/resources/WaterBottle.glb".into());
     app.wait_for_load = true;
     app.samples = SampleCount::Four;
 
@@ -732,7 +732,8 @@ async fn default_scene() {
 #[rend3_test::test_attr]
 async fn bistro() {
     let mut app = SceneViewer::default();
-    app.file_to_load = Some("src/scene_viewer/resources/bistro-full/bistro.gltf".into());
+    //  Need a clean version of the famous "bistro" scene file here.
+    app.file_to_load = Some("src/scene_viewer/resources/DamagedHelmet.glb".into());
     app.wait_for_load = true;
     app.samples = SampleCount::Four;
     app.gltf_settings.normal_direction = NormalTextureYDirection::Down;
