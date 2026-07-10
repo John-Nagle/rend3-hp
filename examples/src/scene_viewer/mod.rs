@@ -733,7 +733,7 @@ async fn default_scene() {
 async fn bistro() {
     let mut app = SceneViewer::default();
     //  Need a clean version of the famous "bistro" scene file here.
-    app.file_to_load = Some("src/scene_viewer/resources/DamagedHelmet.glb".into());
+    app.file_to_load = Some("src/scene_viewer/resources/Bistro.glb".into());
     app.wait_for_load = true;
     app.samples = SampleCount::Four;
     app.gltf_settings.normal_direction = NormalTextureYDirection::Down;

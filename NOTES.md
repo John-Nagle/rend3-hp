@@ -128,6 +128,13 @@ Most of it now compiles.
 
 Trouble at line 507 of graph.rs
 
+## 2026-07-09
+
+Back working on Rend3. Works with WGPU 24. Even does the Bistro scene. 
+But the transparent windows in the Bistro scene come through as transparent areas in the output render
+with the version of the Bistro .glb file we found. And the reddish street light glasses became fully transparent. 
+Need to check transparency handling on known tests.
+
 
 
 
