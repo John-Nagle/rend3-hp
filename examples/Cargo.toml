@@ -22,7 +22,7 @@ tracy = ["tracy-client"]
 # error handling
 anyhow = "1"
 # The egui immediate mode gui library
-egui = "0.31"
+egui = "0.35"
 # Winit integration with egui (turn off the clipboard feature)
 egui-winit = { version = "0.31", default-features = false, features = ["links", "wayland"] }
 # logging

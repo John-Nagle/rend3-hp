@@ -13,13 +13,14 @@ members = [
 ]
 
 [workspace.package]
-version = "0.24.2"
+version = "0.30.0"
 
 [workspace.dependencies]
-wgpu = "^24.0.1"
-wgpu-types = "^24.0.0"
-wgpu-profiler = "^0.21.0"
-glam = "^0.29"
+wgpu = "30"
+wgpu-types = "30"
+# ***WRONG*** WGPU profiler has not caught up with WPGU yet.
+wgpu-profiler = "^0.27"
+glam = "^0.33"
 
 [profile.ci]
 inherits = "dev"

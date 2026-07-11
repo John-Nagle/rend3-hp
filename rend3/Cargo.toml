@@ -38,7 +38,7 @@ bimap = "0.6"
 bitflags = "2"
 bumpalo = "3"
 bytemuck = "1"
-encase = { version = "0.10" }
+encase = { version = "0.12" }
 flume = "0.11"
 glam = { workspace = true, features = ["bytemuck"] }
 handlebars = "5"
