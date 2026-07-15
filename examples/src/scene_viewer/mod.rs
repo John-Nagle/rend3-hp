@@ -714,7 +714,7 @@ pub fn main() {
 #[rend3_test::test_attr]
 async fn default_scene() {
     let mut app = SceneViewer::default();
-    app.file_to_load = Some("src/scene_viewer/resources/WaterBottle.glb".into());
+    app.file_to_load = Some("src/scene_viewer/resources/default_scene.glb".into());
     app.wait_for_load = true;
     app.samples = SampleCount::Four;
 
