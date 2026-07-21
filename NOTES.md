@@ -135,7 +135,70 @@ But the transparent windows in the Bistro scene come through as transparent area
 with the version of the Bistro .glb file we found. And the reddish street light glasses became fully transparent. 
 Need to check transparency handling on known tests.
 
+It looks like translucency does not work at all in the scene-viewer demos. Look at how assets are loaded.
+Rend3 can do transparency but the GLTF loader may not be testing for images that need it.
 
+## 2026-07-18
+
+Looking at the Bistro scene in Blender, there's no translucency in those windows. 
+They are showing a reflection of the default Blender PBR scene.
+These are CHANNEL_PACKED images, but what's in the alpha channel?
+The windows are opaque. The only BLEND texture in the Bistro scene is the speedometer of the motor scooter, per the .gltf file.
+- So this is not a translucency bug at all.
+- It's an opaque item with an alpha channel cutting out things that should not show. What's that supposed to do, anyway?
+- Checking ivy, "Foliage_Ivy_leaf_a"
+  - Ivy has MASK mode in glTF, which is correct. 
+  - Ivy leaf image has 100% alpha in leaf area, 0% alpha in cutout, which is correct. Color in cutout is 0,0,0 alpha 0.
+  - Ivy should have rendered correctly. But it's showing in the cargo test image bistro-failure.png as background empty squares.
+  - Some other leaf-type objects have an alpha cutoff value, but this does not, so it should default to 0.5 and work.
+  - Works OK in scene-viewer mode. Broken in cargo test mode.
+- Checking MenuSign
+  - MenuSign_02_Glass" has an alpha cutoff of 1 in MASK mode, which probably won't work.
+- Other than MasterForgeMetal, MASK mode is used only for foliage.
+
+Asked Github Copilot:
+
+What is different about the way scene_viewer handles alpha channels and the way scene_viewer unit tests handle alpha channels?
+
+I'll search for how alpha channels are handled in the scene_viewer and its unit tests.
+
+Let me search for the scene_viewer module and its tests more specifically:
+
+Let me look at the scene_viewer implementation and its tests more closely:
+
+Now I can see the key difference! Let me examine the clear_color settings more closely:
+
+Based on my examination of the code, I found the key difference in how scene_viewer handles alpha channels:
+Alpha Channel Handling Difference
+
+In scene_viewer's normal rendering (line 690):
+Rust
+
+clear_color: glam::Vec4::new(0.0, 0.0, 0.0, 1.0),
+
+The clear color has an alpha channel of 1.0 (fully opaque).
+
+In scene_viewer's unit tests (line 43 in tests.rs):
+Rust
+
+wgpu::TextureFormat::Rgba8UnormSrgb,
+
+The test uses Rgba8UnormSrgb format, which supports the full alpha channel, but the test creates a texture without any specific alpha handling.
+
+The practical difference:
+
+    Normal rendering: Scene_viewer clears the frame with a fully opaque black background (0, 0, 0, 1), meaning the alpha channel is completely opaque.
+    Unit tests: The tests render to an Rgba8UnormSrgb texture that supports alpha, but there's no explicit alpha blending or transparency handling configured in the test environment—it's a direct render to texture without the window/display compositing that might require alpha.
+
+This means scene_viewer in normal operation doesn't support transparent backgrounds (alpha is always 1.0), while the test infrastructure could theoretically support transparent pixels in the output texture, though the tests themselves don't exercise any transparency features.
+
+ --
+So, tried setting clear_color: glam::Vec4::new(0.0, 0.0, 0.0, 1.0), in "runner". Didn't help.
+Copilot is helpful but not really correct.
+
+2026-07-20
+
+Still haven't figured out the unit test problem. But egui 0.30 is out, so will try that integration again.
 
 
 
