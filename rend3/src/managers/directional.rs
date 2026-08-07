@@ -31,7 +31,7 @@ pub struct InternalDirectionalLight {
 #[derive(Debug, Clone, ShaderType)]
 struct ShaderDirectionalLightBuffer {
     count: ArrayLength,
-    #[size(runtime)]
+    #[shader(size(runtime))]
     array: Vec<ShaderDirectionalLight>,
 }
 

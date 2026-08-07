@@ -18,9 +18,8 @@ version = "0.30.0"
 [workspace.dependencies]
 wgpu = "30"
 wgpu-types = "30"
-# ***WRONG*** WGPU profiler has not caught up with WPGU yet.
-wgpu-profiler = "^0.27"
-glam = "^0.33"
+wgpu-profiler = "^0.28"
+glam = { version = "^0.33", features = ["encase"] }
 
 [profile.ci]
 inherits = "dev"

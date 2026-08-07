@@ -14,7 +14,7 @@ use crate::{
 #[derive(Debug, Clone, ShaderType)]
 struct ShaderPointLightBuffer {
     count: ArrayLength,
-    #[size(runtime)]
+    #[shader(size(runtime))]
     array: Vec<ShaderPointLight>,
 }
 

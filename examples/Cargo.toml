@@ -22,9 +22,9 @@ tracy = ["tracy-client"]
 # error handling
 anyhow = "1"
 # The egui immediate mode gui library
-egui = "0.35"
+egui = "0.36"
 # Winit integration with egui (turn off the clipboard feature)
-egui-winit = { version = "0.31", default-features = false, features = ["links", "wayland"] }
+egui-winit = { version = "0.36", default-features = false, features = ["links", "wayland"] }
 # logging
 env_logger = { version = "0.11", default-features = false, features = ["auto-color", "humantime"] }
 # Linear algebra library
