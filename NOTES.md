@@ -200,7 +200,57 @@ Copilot is helpful but not really correct.
 
 Still haven't figured out the unit test problem. But egui 0.30 is out, so will try that integration again.
 
+2026-07-25
 
+New EGUI not ready yet. Not on crates.io.
+
+Trying bistro scene again.
+- Forced alpha masking mode for opaque items. Scene improved, but not perfect. So original content is mislabelled as opaque where it is not.
+- Forced 0.5 alpha masking mode for blend items. Scene improved in test, but not perfect. 
+  - Why does test mode matter?
+- Things to check: windows above doors, ivy on wall to right.
+  - Scene-viewer normal - windows above doors are black, ivy is fine.
+  - Test mode normal - windows above doors are transparent all the way through, as is part of ivy. Bad.
+  - Forced opaque to alpha in scene-viewer - curtains appear everywhere, no black, default skybox is behind windows.
+  
+2026-07-31
+  Need to focus on this and get it fixed.
+  - Looked at shader. A masked pixel is not drawn if the shader reaches "discard". The shader has the expected inputs.
+    - Depth sort is not involved.
+  - There is a solid no-texture opaque surface in front of the curtains. That's why there's black in Blender.
+    - Again, this acts as if something with an alpha channel was processed in opaque mode.
+      - Opaque with alpha can punch through what's behind it.
+      - Messing with the opaque case does reveal objects with opaque with an alpha channel. That's a bad model.
+        - But why is it different?
+  - Skybox is loaded for both the default scene and bistro. That's hard-coded in the test code.
+  - Copilot: "but there's no explicit alpha blending or transparency handling configured in the test environment—it's a direct render to texture without the window/display compositing that might require alpha."
+    - Hm.
+  - Worked in old Rend3, but what Bistro version did they use?
+  
+2026-07-26
+   There are at least three things wrong here:
+   - An alpha channel in opaque mode is clipped in scene-viewer but not clipped in test.
+   - Blender generated glTF with an alpha channel image in opaque mode.
+   - Something different is going on with the curtains and the ivy.
+   
+   Forcing gltf::material::AlphaMode::Opaque => pbr::Transparency::Cutout { cutout: 0.5 }, // ***TEMP TEST***
+   - Results:
+     - Curtains appear. 
+     - There's still some background checkerboard around the edge of the curtains.
+     - There's a lot of background checkerboard around the ivy.
+   - What's going on?
+     - Alpha was pushed into the resulting image after clipping. That's just wrong.
+     - Is the gltf opaque info used elsewhere than in rend-gltf?
+     - Still puzzled.
+   
+   Blender: "In Blender 4.4, the Alpha Clip option was removed from EEVEE and replaced with a workaround using shader nodes."
+   - That's useful. That explains why the curtains, which are alpha clip, export wrong.
+
+2026-08-03
+   Maybe output compositing mode is wrong.
+   Tried messing with configure_surface
+       alpha_mode: CompositeAlphaMode::Auto,
+   but Premultiplied, Postmultiplied, and Opaque change nothing.
 
   
   
