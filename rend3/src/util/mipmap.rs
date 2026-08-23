@@ -93,7 +93,7 @@ impl MipmapGenerator {
         let pll = device.create_pipeline_layout(&PipelineLayoutDescriptor {
             label: Some("mipmap generator pipeline layout"),
             bind_group_layouts: &[&texture_bgl, &sampler_bgl],
-            push_constant_ranges: &[],
+            immediate_size: 0, // push constant array removed per changelog
         });
 
         let pipelines = default_formats
