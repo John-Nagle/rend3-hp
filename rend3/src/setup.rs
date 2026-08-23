@@ -16,7 +16,7 @@ use crate::{
 
 /// Largest uniform buffer binding needed to run rend3.
 pub const MAX_UNIFORM_BUFFER_BINDING_SIZE: BufferAddress = 1024;
-
+/*
 /// Features required to run in the GpuDriven profile.
 pub const GPU_DRIVEN_REQUIRED_FEATURES: Features = {
     // We need to do this whole bits thing to make this const as OpOr isn't const
@@ -32,10 +32,26 @@ pub const GPU_DRIVEN_REQUIRED_FEATURES: Features = {
             | Features::SPIRV_SHADER_PASSTHROUGH.bits(),
     )
 };
+*/
+
+pub fn get_gpu_driven_required_features() -> Features {
+    //  Can't make this const since Features was made a struct in WGPU between 24 and 30, and .bits is no longer const.
+    Features::from_bits_truncate(
+        Features::PUSH_CONSTANTS.bits()
+            | Features::TEXTURE_COMPRESSION_BC.bits()
+            | Features::DEPTH_CLIP_CONTROL.bits()
+            | Features::TEXTURE_BINDING_ARRAY.bits()
+            | Features::SAMPLED_TEXTURE_AND_STORAGE_BUFFER_ARRAY_NON_UNIFORM_INDEXING.bits()
+            | Features::PARTIALLY_BOUND_BINDING_ARRAY.bits()
+            | Features::MULTI_DRAW_INDIRECT.bits()
+            | Features::MULTI_DRAW_INDIRECT_COUNT.bits()
+            | Features::SPIRV_SHADER_PASSTHROUGH.bits(),
+    )
+}
 
 /// Features required to run in the GpuDriven profile.
 pub const CPU_DRIVEN_REQUIRED_FEATURES: Features = Features::from_bits_truncate(0);
-
+/*
 /// Features that rend3 can use if it they are available, but we don't require.
 pub const OPTIONAL_FEATURES: Features = Features::from_bits_truncate(
     Features::DEPTH_CLIP_CONTROL.bits()
@@ -45,15 +61,29 @@ pub const OPTIONAL_FEATURES: Features = Features::from_bits_truncate(
         | Features::TIMESTAMP_QUERY.bits()
         | Features::TIMESTAMP_QUERY_INSIDE_PASSES.bits(),
 );
+*/
+
+/// Features that rend3 can use if it they are available, but we don't require.
+pub fn get_optional_features() -> Features {
+    //  Can't make this const since Features was made a struct in WGPU between 24 and 30, and .bits is no longer const.
+    Features::from_bits_truncate(
+        Features::DEPTH_CLIP_CONTROL.bits()
+        | Features::TEXTURE_COMPRESSION_BC.bits()
+        | Features::TEXTURE_COMPRESSION_ETC2.bits()
+        | Features::TEXTURE_COMPRESSION_ASTC.bits()
+        | Features::TIMESTAMP_QUERY.bits()
+        | Features::TIMESTAMP_QUERY_INSIDE_PASSES.bits(),
+    )
+}
 
 /// Check that all required features for a given profile are present in the feature
 /// set given.
 pub fn check_features(profile: RendererProfile, device: Features) -> Result<Features, RendererInitializationError> {
     let required = match profile {
-        RendererProfile::GpuDriven => GPU_DRIVEN_REQUIRED_FEATURES,
+        RendererProfile::GpuDriven => get_gpu_driven_required_features(),
         RendererProfile::CpuDriven => CPU_DRIVEN_REQUIRED_FEATURES,
     };
-    let optional = OPTIONAL_FEATURES & device;
+    let optional = get_optional_features() & device;
     let missing = required - device;
     if !missing.is_empty() {
         Err(RendererInitializationError::MissingDeviceFeatures { features: missing })
@@ -464,7 +494,7 @@ pub async fn create_iad(
     #[cfg(target_arch = "wasm32")]
     let default_backend_order = [Backend::BrowserWebGpu];
 
-    let instance = Instance::new(&wgpu::InstanceDescriptor {
+    let instance = Instance::new(wgpu::InstanceDescriptor {
         backends: backend_bits,
         //////dx12_shader_compiler: wgpu::Dx12Compiler::Fxc,
         //////gles_minor_version: Gles3MinorVersion::default(),

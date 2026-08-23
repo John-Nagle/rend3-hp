@@ -135,6 +135,12 @@ But the transparent windows in the Bistro scene come through as transparent area
 with the version of the Bistro .glb file we found. And the reddish street light glasses became fully transparent. 
 Need to check transparency handling on known tests.
 
+## 2026-08-22
+
+Working on upgrade to WGPU 30.
+- In setup.rs, Features with .bits() applied to them are non-const, so we cannot create GPU_DRIVEN_REQUIRED_FEATURES as a const.
+  - This might work in future versions of Rust, but not now.
+
 
 
 
