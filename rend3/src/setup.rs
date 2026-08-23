@@ -21,7 +21,7 @@ pub const MAX_UNIFORM_BUFFER_BINDING_SIZE: BufferAddress = 1024;
 pub const GPU_DRIVEN_REQUIRED_FEATURES: Features = {
     // We need to do this whole bits thing to make this const as OpOr isn't const
     Features::from_bits_truncate(
-        Features::PUSH_CONSTANTS.bits()
+        Features::IMMEDIATES.bits() // was called "PUSH_CONSTANTS" - WGPU change.
             | Features::TEXTURE_COMPRESSION_BC.bits()
             | Features::DEPTH_CLIP_CONTROL.bits()
             | Features::TEXTURE_BINDING_ARRAY.bits()
@@ -37,20 +37,19 @@ pub const GPU_DRIVEN_REQUIRED_FEATURES: Features = {
 pub fn get_gpu_driven_required_features() -> Features {
     //  Can't make this const since Features was made a struct in WGPU between 24 and 30, and .bits is no longer const.
     Features::from_bits_truncate(
-        Features::PUSH_CONSTANTS.bits()
+        Features::IMMEDIATES.bits() // was called "PUSH_CONSTANTS" - WGPU change.
             | Features::TEXTURE_COMPRESSION_BC.bits()
             | Features::DEPTH_CLIP_CONTROL.bits()
             | Features::TEXTURE_BINDING_ARRAY.bits()
             | Features::SAMPLED_TEXTURE_AND_STORAGE_BUFFER_ARRAY_NON_UNIFORM_INDEXING.bits()
             | Features::PARTIALLY_BOUND_BINDING_ARRAY.bits()
-            | Features::MULTI_DRAW_INDIRECT.bits()
             | Features::MULTI_DRAW_INDIRECT_COUNT.bits()
-            | Features::SPIRV_SHADER_PASSTHROUGH.bits(),
+            /* | Features::SPIRV_SHADER_PASSTHROUGH.bits(), REMOVED FROM WGPU */
     )
 }
 
 /// Features required to run in the GpuDriven profile.
-pub const CPU_DRIVEN_REQUIRED_FEATURES: Features = Features::from_bits_truncate(0);
+pub const CPU_DRIVEN_REQUIRED_FEATURES: Features = Features::empty();
 /*
 /// Features that rend3 can use if it they are available, but we don't require.
 pub const OPTIONAL_FEATURES: Features = Features::from_bits_truncate(
