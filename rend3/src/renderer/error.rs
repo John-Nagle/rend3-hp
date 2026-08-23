@@ -17,7 +17,7 @@ pub enum LimitType {
     UniformBufferBindingSize,
     UniformBufferBindingAlignment,
     StorageBufferBindingAlignment,
-    PushConstantSize,
+    ImmediateSize,
     MaxTextureDimension1d,
     MaxTextureDimension2d,
     MaxTextureDimension3d,

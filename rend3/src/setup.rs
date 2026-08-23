@@ -113,7 +113,7 @@ pub const GPU_REQUIRED_LIMITS: Limits = Limits {
     max_vertex_buffers: 7,
     max_vertex_attributes: 7,
     max_bindings_per_bind_group: 640,
-    max_push_constant_size: 128,
+    max_immediate_size: 128,
     min_uniform_buffer_offset_alignment: 256,
     min_storage_buffer_offset_alignment: 256,
     max_inter_stage_shader_components: 60,
@@ -151,7 +151,7 @@ pub const CPU_REQUIRED_LIMITS: Limits = Limits {
     max_vertex_attributes: 6,
     max_bindings_per_bind_group: 640,
     max_vertex_buffer_array_stride: 128,
-    max_push_constant_size: 0,
+    max_immediate_size: 0,
     min_uniform_buffer_offset_alignment: 256,
     min_storage_buffer_offset_alignment: 256,
     max_inter_stage_shader_components: 60,
@@ -292,10 +292,10 @@ pub fn check_limits(profile: RendererProfile, device_limits: &Limits) -> Result<
             required_limits.max_vertex_buffer_array_stride,
             LimitType::MaxVertexBufferArrayStride,
         )?,
-        max_push_constant_size: check_limit_unlimited(
-            device_limits.max_push_constant_size,
-            required_limits.max_push_constant_size,
-            LimitType::PushConstantSize,
+        max_immediate_size: check_limit_unlimited(
+            device_limits.max_immediate_size,
+            required_limits.max_immediate_size,
+            LimitType::ImmediateSize,
         )?,
         min_storage_buffer_offset_alignment: check_limit_low(
             device_limits.min_storage_buffer_offset_alignment,
