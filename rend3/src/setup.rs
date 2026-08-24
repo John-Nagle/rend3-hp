@@ -116,7 +116,7 @@ pub const GPU_REQUIRED_LIMITS: Limits = Limits {
     max_immediate_size: 128,
     min_uniform_buffer_offset_alignment: 256,
     min_storage_buffer_offset_alignment: 256,
-    max_inter_stage_shader_components: 60,
+    max_inter_stage_shader_variables: 60,
     max_compute_workgroup_storage_size: 16352,
     max_compute_invocations_per_workgroup: 256,
     max_compute_workgroup_size_x: 256,
@@ -154,7 +154,7 @@ pub const CPU_REQUIRED_LIMITS: Limits = Limits {
     max_immediate_size: 0,
     min_uniform_buffer_offset_alignment: 256,
     min_storage_buffer_offset_alignment: 256,
-    max_inter_stage_shader_components: 60,
+    max_inter_stage_shader_variables: 60,
     max_compute_workgroup_storage_size: 16352,
     max_compute_invocations_per_workgroup: 256,
     max_compute_workgroup_size_x: 256,
@@ -307,9 +307,9 @@ pub fn check_limits(profile: RendererProfile, device_limits: &Limits) -> Result<
             required_limits.min_uniform_buffer_offset_alignment,
             LimitType::UniformBufferBindingAlignment,
         )?,
-        max_inter_stage_shader_components: check_limit_unlimited(
-            device_limits.max_inter_stage_shader_components,
-            required_limits.max_inter_stage_shader_components,
+        max_inter_stage_shader_variables: check_limit_unlimited(
+            device_limits.max_inter_stage_shader_variables,
+            required_limits.max_inter_stage_shader_variables,
             LimitType::MaxInterStageShaderComponents,
         )?,
         max_compute_workgroup_storage_size: check_limit_unlimited(
