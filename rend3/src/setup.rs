@@ -129,6 +129,7 @@ pub const GPU_REQUIRED_LIMITS: Limits = Limits {
     max_color_attachments: 8,
     /* min_subgroup_size: 0, */
     /* max_subgroup_size: 0, */
+    ..Default::default()    // Use WGPU defaults for 20+ new fields.
 };
 
 /// Limits required to run in the CpuDriven profile.
@@ -167,6 +168,7 @@ pub const CPU_REQUIRED_LIMITS: Limits = Limits {
     max_color_attachments: 8,
     /* min_subgroup_size: 0, */
     /* max_subgroup_size: 0, */
+    ..Default::default()    // Use WGPU defaults for 20+ new fields.
 };
 
 fn check_limit_unlimited<LimitValue: Into<u64> + Ord>(
@@ -371,6 +373,7 @@ pub fn check_limits(profile: RendererProfile, device_limits: &Limits) -> Result<
             LimitType::MinSubgroupSize,
         )?,
         */
+        ..Default::default()    // Use WGPU defaults for 20+ new fields.
     })
 }
 
