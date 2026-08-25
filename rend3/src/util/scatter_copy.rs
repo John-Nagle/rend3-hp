@@ -53,8 +53,9 @@ impl ScatterCopy {
 
         let pll = device.create_pipeline_layout(&PipelineLayoutDescriptor {
             label: Some("ScatterCopy pll"),
-            bind_group_layouts: &[&bgl],
-            immediates_ranges: &[],
+            bind_group_layouts: &[Some(&bgl)],
+            /* immediates_ranges: &[], */
+            immediate_size: 0,
         });
 
         let pipeline = device.create_compute_pipeline(&ComputePipelineDescriptor {

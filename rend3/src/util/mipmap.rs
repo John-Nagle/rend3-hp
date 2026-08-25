@@ -11,6 +11,7 @@ use wgpu::{
     PrimitiveState, PrimitiveTopology, RenderPassColorAttachment, RenderPassDescriptor, RenderPipeline,
     RenderPipelineDescriptor, SamplerBindingType, SamplerDescriptor, ShaderModule, ShaderStages, StoreOp, Texture,
     TextureDescriptor, TextureSampleType, TextureViewDescriptor, TextureViewDimension, VertexState,
+    MipmapFilterMode,
 };
 
 use crate::{
@@ -74,7 +75,7 @@ impl MipmapGenerator {
             address_mode_w: AddressMode::ClampToEdge,
             mag_filter: FilterMode::Linear,
             min_filter: FilterMode::Linear,
-            mipmap_filter: FilterMode::Linear,
+            mipmap_filter: MipmapFilterMode::Linear,
             lod_min_clamp: 0.0,
             lod_max_clamp: 100.0,
             compare: None,
@@ -92,7 +93,7 @@ impl MipmapGenerator {
 
         let pll = device.create_pipeline_layout(&PipelineLayoutDescriptor {
             label: Some("mipmap generator pipeline layout"),
-            bind_group_layouts: &[&texture_bgl, &sampler_bgl],
+            bind_group_layouts: &[Some(&texture_bgl), Some(&sampler_bgl)],
             immediate_size: 0, // push constant array removed per changelog
         });
 
