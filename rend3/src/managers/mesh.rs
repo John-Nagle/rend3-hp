@@ -66,7 +66,7 @@ pub enum MeshCreationError {
         inner: wgpu::Error,
     },
     #[error("Exceeded maximum mesh data buffer size of {max_buffer_size}")]
-    ExceededMaximumBufferSize { max_buffer_size: u32 },
+    ExceededMaximumBufferSize { max_buffer_size: u64 },
     #[error("Failed to write new mesh data to buffer. Failed to allocate staging buffer.")]
     BufferWriteFailed {
         #[source]

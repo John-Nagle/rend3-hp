@@ -463,7 +463,7 @@ impl<'node> RenderGraph<'node> {
                 let profiler_query = data_core.profiler.try_lock().unwrap().begin_query(
                     node.label,
                     &mut encoder_or_rpass,
-                    &renderer.device,
+                    /* &renderer.device, */
                 );
 
                 let ctx = NodeExecutionContext {

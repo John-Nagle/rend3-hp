@@ -107,7 +107,7 @@ pub const GPU_REQUIRED_LIMITS: Limits = Limits {
     max_storage_buffers_per_shader_stage: 5,
     max_storage_textures_per_shader_stage: 0,
     max_uniform_buffers_per_shader_stage: 2,
-    max_uniform_buffer_binding_size: MAX_UNIFORM_BUFFER_BINDING_SIZE as u32,
+    max_uniform_buffer_binding_size: MAX_UNIFORM_BUFFER_BINDING_SIZE,
     max_storage_buffer_binding_size: 128 << 20,
     max_vertex_buffer_array_stride: 128,
     max_vertex_buffers: 7,
@@ -129,7 +129,7 @@ pub const GPU_REQUIRED_LIMITS: Limits = Limits {
     max_color_attachments: 8,
     /* min_subgroup_size: 0, */
     /* max_subgroup_size: 0, */
-    ..Default::default()    // Use WGPU defaults for 20+ new fields.
+    ..Limits::defaults()    // Use WGPU defaults for 20+ new fields.
 };
 
 /// Limits required to run in the CpuDriven profile.
@@ -146,7 +146,7 @@ pub const CPU_REQUIRED_LIMITS: Limits = Limits {
     max_storage_buffers_per_shader_stage: 2,
     max_storage_textures_per_shader_stage: 0,
     max_uniform_buffers_per_shader_stage: 2,
-    max_uniform_buffer_binding_size: MAX_UNIFORM_BUFFER_BINDING_SIZE as u32,
+    max_uniform_buffer_binding_size: MAX_UNIFORM_BUFFER_BINDING_SIZE,
     max_storage_buffer_binding_size: 128 << 20,
     max_vertex_buffers: 6,
     max_vertex_attributes: 6,
@@ -168,7 +168,7 @@ pub const CPU_REQUIRED_LIMITS: Limits = Limits {
     max_color_attachments: 8,
     /* min_subgroup_size: 0, */
     /* max_subgroup_size: 0, */
-    ..Default::default()    // Use WGPU defaults for 20+ new fields.
+    ..Limits::defaults()    // Use WGPU defaults for 20+ new fields.
 };
 
 fn check_limit_unlimited<LimitValue: Into<u64> + Ord>(

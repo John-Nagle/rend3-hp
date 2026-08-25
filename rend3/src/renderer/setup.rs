@@ -62,7 +62,9 @@ pub fn create_renderer(
     );
 
     let profiler = Mutex::new(
-        wgpu_profiler::GpuProfiler::new(GpuProfilerSettings {
+        wgpu_profiler::GpuProfiler::new(
+            &iad.device,
+            GpuProfilerSettings {
             enable_timer_queries: features.contains(wgpu::Features::TIMESTAMP_QUERY) && !cfg!(target_arch = "wasm32"),
             enable_debug_groups: true,
             max_num_pending_frames: 4,
