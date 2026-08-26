@@ -4,7 +4,7 @@ use std::sync::Arc;
 
 use wgpu::{
     Adapter, AdapterInfo, Backend, Backends, BufferAddress, Device, DeviceDescriptor, DeviceType, Features,
-    Gles3MinorVersion, Instance, InstanceFlags, Limits, Queue,
+    Gles3MinorVersion, Instance, InstanceFlags, Limits, Queue, Trace, ExperimentalFeatures,
 };
 
 #[allow(unused_imports)]
@@ -508,6 +508,10 @@ pub async fn create_iad(
             ..Default::default()
         },
         flags: InstanceFlags::default(),
+        //  New features from WGPU changelog defaults.
+        //  Not sure about display being None here.
+        memory_budget_thresholds: Default::default(),
+        display: None,
     });
 
     let mut valid_adapters = FastHashMap::<Backend, Vec<PotentialAdapter<Adapter>>>::default();
@@ -527,7 +531,8 @@ pub async fn create_iad(
             .into_iter();
 
         let mut potential_adapters = Vec::new();
-        for (idx, adapter) in adapters.into_iter().enumerate() {
+        //  Added an "await" here when converting from WGPU 24 to WGPU 30. Not sure about this. (JN)
+        for (idx, adapter) in adapters.await.into_iter().enumerate() {
             let info = adapter.get_info();
             let limits = adapter.limits();
             let features = adapter.features();
@@ -587,6 +592,8 @@ pub async fn create_iad(
                         required_features: adapter.features.union(additional_features.unwrap_or_else(Features::empty)),
                         required_limits: adapter.limits,
                         memory_hints: Default::default(), // Use default for memory hints for now. Possible future optimization.
+                        experimental_features: ExperimentalFeatures::disabled(),
+                        trace: Trace::Off,
                     },
                     None,
                 )
