@@ -570,6 +570,7 @@ impl<'node> RenderGraph<'node> {
                         }
                     }),
                     ops: Operations { load, store },
+                    depth_slice: None, // Not sure about what goes in this new field. JN
                 }
             })
             .map(Option::Some)

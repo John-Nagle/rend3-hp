@@ -595,7 +595,7 @@ pub async fn create_iad(
                         experimental_features: ExperimentalFeatures::disabled(),
                         trace: Trace::Off,
                     },
-                    None,
+                    /* None, param removed per WGPU changelog */
                 )
                 .await
                 .map_err(|_| RendererInitializationError::RequestDeviceFailed)?;
