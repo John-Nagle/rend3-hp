@@ -139,8 +139,9 @@ impl MipmapGenerator {
                 targets: &[Some(ColorTargetState { format, blend: None, write_mask: ColorWrites::all() })],
                 compilation_options: PipelineCompilationOptions::default(), // use default WGPU options. New in WGPU 0.20 (JN)
             }),
-            multiview: None,
+            /* multiview: None, Obsolete */
             cache: None,    // no pipeline cache. New in WGPU 21.
+            multiview_mask: None, // New in changelog, not used.
         })
     }
 
@@ -212,6 +213,7 @@ impl MipmapGenerator {
                 depth_stencil_attachment: None,
                 timestamp_writes: None,
                 occlusion_query_set: None,
+                multiview_mask: None, // Not using dual cameras for VR
             });
 
             rpass.set_pipeline(pipeline);

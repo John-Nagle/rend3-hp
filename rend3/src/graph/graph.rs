@@ -623,6 +623,7 @@ impl<'node> RenderGraph<'node> {
             depth_stencil_attachment,
             timestamp_writes: None,
             occlusion_query_set: None,
+            multiview_mask: None, // New feature in WGPU changelog, not used.
         });
         Rc::new(RefCell::new(render_pass.forget_lifetime()))  // return internally mutable form not tied to encoder lifetime
     }
