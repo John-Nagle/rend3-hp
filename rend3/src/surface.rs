@@ -23,6 +23,7 @@ pub fn configure_surface(
             desired_maximum_frame_latency: 2,
             alpha_mode: CompositeAlphaMode::Auto,
             view_formats: vec![],
+            color_space: wgpu::SurfaceColorSpace::Auto,
         },
     )
 }
