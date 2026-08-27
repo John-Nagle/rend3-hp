@@ -1,5 +1,5 @@
 //! Output frame and surface acquisition.
-
+/* SEEMS TO BE DEAD CODE
 use std::sync::Arc;
 
 use wgpu::{SurfaceTexture, TextureView};
@@ -28,3 +28,4 @@ impl OutputFrame {
         }
     }
 }
+*/

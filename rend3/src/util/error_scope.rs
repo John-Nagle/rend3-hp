@@ -6,7 +6,7 @@ use std::{
     task::{Context, Poll},
 };
 
-use wgpu::Device;
+use wgpu::{ Device, ErrorScopeGuard };
 
 /// Helper for working with allocation failure error scopes.
 ///
@@ -14,7 +14,11 @@ use wgpu::Device;
 /// on WebGPU. This will always return success on WebGPU.
 #[must_use = "All error scopes must end in a call to `end`"]
 pub struct AllocationErrorScope<'a> {
+    /// Relevant device.
     device: &'a Device,
+    /// Thread-local error scope, which must be carried with the error.
+    /// It's an option so we can use "take" and take ownership, so "pop" can consume it.
+    scope: Option<ErrorScopeGuard>,
     /// Used to communicate with the destructor if `end` was called on this or not.
     ended: bool,
 }
@@ -22,8 +26,8 @@ pub struct AllocationErrorScope<'a> {
 impl<'a> AllocationErrorScope<'a> {
     /// Create a new AllocationErrorScope on this device.
     pub fn new(device: &'a Device) -> Self {
-        device.push_error_scope(wgpu::ErrorFilter::OutOfMemory);
-        Self { device, ended: false }
+        let scope = Some(device.push_error_scope(wgpu::ErrorFilter::OutOfMemory));
+        Self { device, scope, ended: false }
     }
 
     pub fn end(mut self) -> Result<(), wgpu::Error> {
@@ -33,8 +37,7 @@ impl<'a> AllocationErrorScope<'a> {
         // The future we get from wgpu will always be immedately ready on webgl/native. We can't
         // reasonably handle failures on webgpu. As such we don't want to wait
         // for the future to complete, just manually poll it once.
-
-        let mut future = self.device.pop_error_scope();
+        let mut future = self.scope.take().unwrap().pop();
         let pin = Pin::new(&mut future);
         match pin.poll(&mut Context::from_waker(&noop_waker::noop_waker())) {
             // We got an error, so return an error.
