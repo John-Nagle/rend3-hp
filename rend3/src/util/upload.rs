@@ -54,9 +54,11 @@ impl<'a> UploadChainer<'a> {
     pub fn stage(&mut self) {
         let staging_buffer = self.staging_buffer.as_ref().unwrap();
 
-        let mut mapping = staging_buffer.slice(..).get_mapped_range_mut();
+        let mapping = staging_buffer.slice(..).get_mapped_range_mut();
+        let mut mapping = mapping.expect("Error accessing staging buffer"); // panics on range error
         for upload in &self.uploads {
-            mapping[upload.staging_offset as usize..][..upload.data.len()].copy_from_slice(upload.data);
+            /* mapping[upload.staging_offset as usize..][..upload.data.len()].copy_from_slice(upload.data); per WGPU changelog */
+            mapping.slice(upload.staging_offset as usize .. upload.data.len()).copy_from_slice(upload.data);
         }
         drop(mapping);
 
