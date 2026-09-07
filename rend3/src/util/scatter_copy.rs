@@ -99,45 +99,30 @@ impl ScatterCopy {
             usage: BufferUsages::STORAGE,
             mapped_at_creation: true,
         });
-        //////let mut mapped_range = source_buffer.slice(..).get_mapped_range_mut();
-        ////// let mut mapped_range = source_buffer.slice(..).get_mapped_range_mut().expect("Unable to map range of GPU memory");
         //  get_mapped_range_mut now returns a Result.  
         let mut mapped_range = source_buffer
             .slice(..)
             .get_mapped_range_mut()
             .expect("Unable to map range of GPU memory");
-        let mut mapped_range = mapped_range.slice(..);         
-        //////let mapped_slice: &mut [u32] = bytemuck::cast_slice_mut(&mut mapped_range);
-        //////mapped_range.slice = 0;// ***TEMP TEST***
+        let mut mapped_range = mapped_range.slice(..);     
+        //  Output buffer format is an 8-byte header, followed by blocks of a 4-byte header plus data.    
         //  Generate 8-byte header.
         let count_u32: u32 = count.try_into().unwrap();
-        let hdr0 = ((size_of_t_u32 / 4).to_le_bytes());
+        let hdr0 = (size_of_t_u32 / 4).to_le_bytes();
         let hdr1 = count_u32.to_le_bytes();
         mapped_range.slice(0..4).copy_from_slice(hdr0.as_slice());
         mapped_range.slice(4..8).copy_from_slice(hdr1.as_slice());
-        /*
-        let count_u32: u32 = count.try_into().unwrap();
-        mapped_slice[0] = size_of_t_u32 / 4;
-        mapped_slice[1] = count_u32;
-        let mut writer = encase::internal::Writer::new(&item.data, WriteOnlyBuf(mapped_range), 0).expect("Unable to create Writer to GPU");
-        //  Write header info
-        let hdr0 = ((size_of_t_u32 / 4).to_le_bytes().as_slice());
-        hdr0.write_into(writer);
-        let count_u32: u32 = count.try_into().unwrap();
-        let hdr1 = count_u32.to_le_bytes().as_slice();
-        hdr1.write_into(writer);
-        */
         //  ***CHECK ALL OFFSETS, WHICH ARE NOW BYTES NOT WORDS***
 
         for (idx, item) in data_iterator.enumerate() {
-            // Add two words for the header.
-            let range_start = idx * stride_words + 2;
-            let range_end = range_start + stride_words;
+            // Add four bytes for the header.
+            let range_start_bytes = (idx * stride_words + 2)*2;
+            let range_end_bytes = range_start_bytes + stride_words*2;
 
             //////mapped_slice[range_start] = item.word_offset;
-            //  Add header word for this entry.
+            //  Add header word for this entry, 4 bytes
             let hdrn = item.word_offset.to_le_bytes();
-            mapped_range.slice(4..8).copy_from_slice(hdrn.as_slice());
+            mapped_range.slice(range_start_bytes..range_start_bytes+4).copy_from_slice(hdrn.as_slice());
             /*
             let mut writer = encase::internal::Writer::new(
                 &item.data,
@@ -149,7 +134,7 @@ impl ScatterCopy {
             .unwrap();
             item.data.write_into(&mut writer);
             */
-            let mut writer = encase::internal::Writer::new(&item.data, WriteOnlyBuf(mapped_range.slice(range_start + 1 .. range_end)), 0).expect("Unable to create Writer to GPU");
+            let mut writer = encase::internal::Writer::new(&item.data, WriteOnlyBuf(mapped_range.slice(range_start_bytes + 4 .. range_end_bytes)), 0).expect("Unable to create Writer to GPU");
             item.data.write_into(&mut writer);
         }
 
