@@ -118,23 +118,11 @@ impl ScatterCopy {
             // Add four bytes for the header.
             let range_start_bytes = (idx * stride_words + 2)*2;
             let range_end_bytes = range_start_bytes + stride_words*2;
-
-            //////mapped_slice[range_start] = item.word_offset;
             //  Add header word for this entry, 4 bytes
             let hdrn = item.word_offset.to_le_bytes();
             mapped_range.slice(range_start_bytes..range_start_bytes+4).copy_from_slice(hdrn.as_slice());
-            /*
-            let mut writer = encase::internal::Writer::new(
-                &item.data,
-                //////bytemuck::cast_slice_mut(&mut mapped_slice[range_start + 1..range_end]),
-                bytemuck::cast_slice_mut::<_, u8>(&mut mapped_slice[range_start + 1..range_end]),
-                ////bytemuck::cast_slice_mut::<_, encase::internal::BufferMut>(&mut mapped_slice[range_start + 1..range_end]),
-                0,
-            )
-            .unwrap();
-            item.data.write_into(&mut writer);
-            */
-            let mut writer = encase::internal::Writer::new(&item.data, WriteOnlyBuf(mapped_range.slice(range_start_bytes + 4 .. range_end_bytes)), 0).expect("Unable to create Writer to GPU");
+            let mut writer = encase::internal::Writer::new(&item.data, WriteOnlyBuf(mapped_range.slice(range_start_bytes + 4 .. range_end_bytes)), 0)
+                .expect("Unable to create Writer to GPU");
             item.data.write_into(&mut writer);
         }
 
@@ -158,6 +146,7 @@ impl ScatterCopy {
 
 /// Workaround for introduction of WriteOnly type in WGPU.
 /// From SkiFire13 on Rust forums.
+/// We need a BufferMut which is a WriteOnly.
 struct WriteOnlyBuf<'a>(wgpu::WriteOnly<'a, [u8]>);
 
 impl<'a> encase::internal::BufferMut for WriteOnlyBuf<'a> {
@@ -176,15 +165,6 @@ impl<'a> encase::internal::BufferMut for WriteOnlyBuf<'a> {
         self.0.slice(offset..offset+val.len()).copy_from_slice(val);
     }
 }
-/*
-let mut mapped_range = source_buffer
-    .get_mapped_range_mut()
-    .expect("Unable to map range of GPU memory")
-    .slice(..);
-
-let mut writer = encase::internal::Writer::new(&item.data, WriteOnlyBuf(mapped_range), 0);
-item.data.write_into(&mut writer);
-*/
 
 #[cfg(test)]
 mod test {
