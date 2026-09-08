@@ -112,16 +112,16 @@ impl ScatterCopy {
         let hdr1 = count_u32.to_le_bytes();
         mapped_range.slice(0..4).copy_from_slice(hdr0.as_slice());
         mapped_range.slice(4..8).copy_from_slice(hdr1.as_slice());
-        //  ***CHECK ALL OFFSETS, WHICH ARE NOW BYTES NOT WORDS***
-
+        //  ***RECHECK ALL OFFSETS***
         for (idx, item) in data_iterator.enumerate() {
-            // Add four bytes for the header.
-            let range_start_bytes = (idx * stride_words + 2)*2;
-            let range_end_bytes = range_start_bytes + stride_words*2;
+            // Add four bytes for the fixed header.
+            let range_start_bytes = idx * stride_bytes as usize + hdr0.len() + hdr1.len();
+            let range_end_bytes = range_start_bytes + stride_bytes as usize;
             //  Add header word for this entry, 4 bytes
             let hdrn = item.word_offset.to_le_bytes();
-            mapped_range.slice(range_start_bytes..range_start_bytes+4).copy_from_slice(hdrn.as_slice());
-            let mut writer = encase::internal::Writer::new(&item.data, WriteOnlyBuf(mapped_range.slice(range_start_bytes + 4 .. range_end_bytes)), 0)
+            mapped_range.slice(range_start_bytes..range_start_bytes+hdrn.len()).copy_from_slice(hdrn.as_slice());
+            //  ***CHECK RANGE*** This looks like an off by 1 error. Does stride_bytes contain the hdrn header word?
+            let mut writer = encase::internal::Writer::new(&item.data, WriteOnlyBuf(mapped_range.slice(range_start_bytes + hdrn.len() .. range_end_bytes)), 0)
                 .expect("Unable to create Writer to GPU");
             item.data.write_into(&mut writer);
         }
