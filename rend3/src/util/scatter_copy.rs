@@ -90,7 +90,7 @@ impl ScatterCopy {
         let count = data_iterator.len() as u64;
 
         let stride_bytes = size_of_t + 4;
-        let stride_words = (stride_bytes / 4) as usize;
+        let _stride_words = (stride_bytes / 4) as usize;
 
         let buffer_size = count * stride_bytes + 8;
         let source_buffer = device.create_buffer(&BufferDescriptor {
