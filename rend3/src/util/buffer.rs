@@ -3,7 +3,9 @@
 use std::{marker::PhantomData, ops::Deref, sync::Arc};
 
 use encase::{private::WriteInto, ShaderType};
+use encase::internal::BufferMut;
 use wgpu::{Buffer, BufferAddress, BufferDescriptor, BufferUsages, Device, Queue};
+use super::scatter_copy::WriteOnlyBuf;
 
 use crate::util::typedefs::SsoString;
 
@@ -63,7 +65,11 @@ where
         self.ensure_size(device, size.get());
 
         let mut mapped = queue.write_buffer_with(&self.inner, 0, size).unwrap();
-        encase::StorageBuffer::new(&mut mapped).write(data).unwrap();
+        //////encase::StorageBuffer::new(&mut mapped).write(data).unwrap();
+        //  ***NOT SURE ABOUT THIS***
+        let mut writer = encase::internal::Writer::new(&data, WriteOnlyBuf(mapped.slice(..)), 0)
+                .expect("Unable to create Writer to GPU");
+        data.write_into(&mut writer);
         drop(mapped);
     }
 }

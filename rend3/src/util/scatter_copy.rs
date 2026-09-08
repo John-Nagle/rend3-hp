@@ -81,6 +81,9 @@ impl ScatterCopy {
         D: IntoIterator<Item = ScatterData<T>>,
         D::IntoIter: ExactSizeIterator,
     {
+        //  This is an overly complicated piece of code to copy data into GPU memory.
+        //  All this really does is sequentially copy blocks of data into a write-only memory area.
+        //  Excessive cleverness with generics and traits makes this unnecessarily difficult and bug-prone. (JN)
         let data_iterator = data.into_iter();
 
         let size_of_t = T::SHADER_SIZE.get();
@@ -147,7 +150,7 @@ impl ScatterCopy {
 /// Workaround for introduction of WriteOnly type in WGPU.
 /// From SkiFire13 on Rust forums.
 /// We need a BufferMut which is a WriteOnly.
-struct WriteOnlyBuf<'a>(wgpu::WriteOnly<'a, [u8]>);
+pub struct WriteOnlyBuf<'a>(pub wgpu::WriteOnly<'a, [u8]>);
 
 impl<'a> encase::internal::BufferMut for WriteOnlyBuf<'a> {
     #[inline]
