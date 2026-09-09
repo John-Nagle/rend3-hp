@@ -1,13 +1,12 @@
 //! Helpers for building the per-camera uniform data used for cameras and
 //! shadows.
-use crate::scatter_copy::{WriteOnlyBuf};
 use encase::internal::WriteInto;
 use encase::{ShaderSize, ShaderType, UniformBuffer};
 use glam::{Mat4, UVec2, Vec4};
 use rend3::{
     graph::{DataHandle, NodeResourceUsage, RenderGraph, RenderTargetHandle},
     managers::CameraState,
-    util::{bind_merge::BindGroupBuilder, frustum::Frustum},
+    util::{bind_merge::BindGroupBuilder, frustum::Frustum, scatter_copy::WriteOnlyBuf},
 };
 use wgpu::{BindGroup, BufferUsages};
 
