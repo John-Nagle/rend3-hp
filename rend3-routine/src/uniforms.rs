@@ -1,6 +1,7 @@
 //! Helpers for building the per-camera uniform data used for cameras and
 //! shadows.
-
+use crate::scatter_copy::{WriteOnlyBuf};
+use encase::internal::WriteInto;
 use encase::{ShaderSize, ShaderType, UniformBuffer};
 use glam::{Mat4, UVec2, Vec4};
 use rend3::{
@@ -108,8 +109,11 @@ pub fn add_to_graph<'node>(
             usage: BufferUsages::UNIFORM,
             mapped_at_creation: true,
         });
-        let mut mapping = uniform_buffer.slice(..).get_mapped_range_mut();
-        UniformBuffer::new(&mut *mapping).write(&uniforms).unwrap();
+        let mut mapping = uniform_buffer.slice(..).get_mapped_range_mut().expect("Unable to map uniform buffer");
+        //////UniformBuffer::new(&mut *mapping).write(&uniforms).unwrap();
+        let mut writer = encase::internal::Writer::new(&data, WriteOnlyBuf(mapped.slice(..)), 0)
+                .expect("Unable to create Writer to GPU");
+        uniforms.write_into(&mut writer);
         drop(mapping);
         uniform_buffer.unmap();
 

@@ -64,7 +64,7 @@ where
         let size = data.size();
         self.ensure_size(device, size.get());
 
-        let mut mapped = queue.write_buffer_with(&self.inner, 0, size).unwrap();
+        let mut mapped = queue.write_buffer_with(&self.inner, 0, size).expect("Unable to map write buffer");
         //////encase::StorageBuffer::new(&mut mapped).write(data).unwrap();
         //  ***NOT SURE ABOUT THIS***
         let mut writer = encase::internal::Writer::new(&data, WriteOnlyBuf(mapped.slice(..)), 0)
