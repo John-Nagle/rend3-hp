@@ -3,7 +3,7 @@
 //! Will default to the PBR shader code if custom code is not specified.
 
 use std::{cmp::Ordering, marker::PhantomData, sync::Arc};
-
+use encase::internal::WriteInto;
 use arrayvec::ArrayVec;
 use encase::{ShaderSize, StorageBuffer};
 use ordered_float::OrderedFloat;
@@ -12,6 +12,7 @@ use rend3::{
     managers::{CameraState, InternalObject, MaterialArchetypeView, TextureBindGroupIndex},
     types::{Material, RawObjectHandle, SampleCount, SortingOrder, SortingReason},
     util::bind_merge::BindGroupBuilder,
+    util::scatter_copy::WriteOnlyBuf,
     ProfileData, Renderer, RendererDataCore, RendererProfile, ShaderPreProcessor,
 };
 use serde::Serialize;
