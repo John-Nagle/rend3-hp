@@ -107,7 +107,7 @@ impl PbrRoutine {
                 extra_bgls: &[],
                 descriptor_callback: Some(&|desc, targets| {
                     if transparency == TransparencyType::Blend {
-                        desc.depth_stencil.as_mut().unwrap().depth_write_enabled = false;
+                        desc.depth_stencil.as_mut().unwrap().depth_write_enabled = Some(false);
                         targets[0].as_mut().unwrap().blend = Some(BlendState::ALPHA_BLENDING)
                     }
                 }),

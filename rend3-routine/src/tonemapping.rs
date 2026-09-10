@@ -45,7 +45,7 @@ fn create_pipeline(
 
     let pll = device.create_pipeline_layout(&PipelineLayoutDescriptor {
         label: Some("tonemapping pass"),
-        bind_group_layouts: &[&interfaces.forward_uniform_bgl, bgl],
+        bind_group_layouts: &[Some(&interfaces.forward_uniform_bgl), Some(bgl)],
         push_constant_ranges: &[],
     });
 

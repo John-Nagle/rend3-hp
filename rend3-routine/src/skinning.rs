@@ -74,7 +74,7 @@ fn build_gpu_skinning_input_buffers(ctx: &NodeExecutionContext) -> PreSkinningBu
     });
 
     let mut skinning_input_range = gpu_skinning_inputs.slice(..).get_mapped_range_mut();
-    let mut skinning_input_data = encase::DynamicStorageBuffer::new(&mut *skinning_input_range);
+    let mut skinning_input_data = encase::DynamicStorageBuffer::new(&mut skinning_input_range);
     let mut joint_matrices_data = joint_matrices.slice(..).get_mapped_range_mut();
 
     // Skeletons have a variable number of joints, so we need to keep track of
@@ -160,7 +160,7 @@ impl GpuSkinner {
 
         let layout = device.create_pipeline_layout(&PipelineLayoutDescriptor {
             label: None,
-            bind_group_layouts: &[&bgl],
+            bind_group_layouts: &[Some(&bgl)],
             push_constant_ranges: &[],
         });
 

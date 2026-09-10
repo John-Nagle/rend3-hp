@@ -377,8 +377,8 @@ fn build_forward_pipeline_inner<M: Material>(
         },
         depth_stencil: Some(DepthStencilState {
             format: TextureFormat::Depth32Float,
-            depth_write_enabled: true,
-            depth_compare: CompareFunction::GreaterEqual,
+            depth_write_enabled: Some(true),
+            depth_compare: Some(CompareFunction::GreaterEqual),
             stencil: StencilState::default(),
             bias: match args.routine_type {
                 // TODO: figure out what to put here

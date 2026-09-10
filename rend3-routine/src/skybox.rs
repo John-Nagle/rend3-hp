@@ -158,8 +158,8 @@ impl SkyboxPipelines {
                 },
                 depth_stencil: Some(DepthStencilState {
                     format: TextureFormat::Depth32Float,
-                    depth_write_enabled: true,
-                    depth_compare: CompareFunction::GreaterEqual,
+                    depth_write_enabled: Some(true),
+                    depth_compare: Some(CompareFunction::GreaterEqual),
                     stencil: StencilState::default(),
                     bias: DepthBiasState::default(),
                 }),
