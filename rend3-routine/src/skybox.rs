@@ -134,7 +134,7 @@ impl SkyboxPipelines {
         let pll = renderer.device.create_pipeline_layout(&PipelineLayoutDescriptor {
             label: Some("skybox pass"),
             bind_group_layouts: &[Some(&interfaces.forward_uniform_bgl), Some(bgl)],
-            push_constant_ranges: &[],
+            immediate_size: 0,
         });
 
         let inner = |samples| {

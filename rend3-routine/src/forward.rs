@@ -135,7 +135,7 @@ impl<M: Material> ForwardRoutine<M> {
         let pll = args.renderer.device.create_pipeline_layout(&PipelineLayoutDescriptor {
             label: Some(args.name),
             bind_group_layouts: &bgls,
-            push_constant_ranges: &[],
+            immediate_size: 0,
         });
 
         Self {

@@ -161,7 +161,7 @@ impl GpuSkinner {
         let layout = device.create_pipeline_layout(&PipelineLayoutDescriptor {
             label: None,
             bind_group_layouts: &[Some(&bgl)],
-            push_constant_ranges: &[],
+            immediate_size: 0,
         });
 
         let module = device.create_shader_module(ShaderModuleDescriptor {
