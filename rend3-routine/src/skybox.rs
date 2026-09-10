@@ -133,7 +133,7 @@ impl SkyboxPipelines {
 
         let pll = renderer.device.create_pipeline_layout(&PipelineLayoutDescriptor {
             label: Some("skybox pass"),
-            bind_group_layouts: &[&interfaces.forward_uniform_bgl, bgl],
+            bind_group_layouts: &[Some(&interfaces.forward_uniform_bgl), Some(bgl)],
             push_constant_ranges: &[],
         });
 
@@ -174,7 +174,7 @@ impl SkyboxPipelines {
                     })],
                     compilation_options: PipelineCompilationOptions::default(), // use default WGPU options. New in WGPU 0.20 (JN)
                 }),
-                multiview: None,
+                multiview_mask: None,
                 cache: None,    // (JN) no cache used
             })
         };

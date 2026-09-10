@@ -75,7 +75,7 @@ fn create_pipeline(
             targets: &[Some(ColorTargetState { format: output_format, blend: None, write_mask: ColorWrites::all() })],
             compilation_options: PipelineCompilationOptions::default(), // use default WGPU options. New in WGPU 0.20 (JN)
         }),
-        multiview: None,
+        multiview_mask: None,
         cache: None,    // (JN) no cache used
     })
 }
