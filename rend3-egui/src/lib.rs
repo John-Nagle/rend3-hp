@@ -33,7 +33,14 @@ impl EguiRenderRoutine {
         scale_factor: f32,
     ) -> Self {
         const DITHERING: bool = false;  // new EGUI feature.
-        let rpass = egui_wgpu::Renderer::new(&renderer.device, surface_format, None, samples as _, DITHERING);
+        /* let rpass = egui_wgpu::Renderer::new(&renderer.device, surface_format, None, samples as _, DITHERING); */
+        //  New EGUI options
+        let renderer_options = egui_wgpu::RendererOptions {
+            msaa_samples: samples as u32,
+            dithering: DITHERING,
+            .. Default::default()
+        };
+        let rpass = egui_wgpu::Renderer::new(&renderer.device, surface_format, renderer_options);
 
         Self {
             internal: rpass,
