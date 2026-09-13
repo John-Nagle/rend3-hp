@@ -121,13 +121,18 @@ fn build_gpu_skinning_input_buffers(ctx: &NodeExecutionContext) -> PreSkinningBu
 
             skinning_input_data.write(&input).unwrap();
 
-            let joint_matrices_ptr = joint_matrices_data.as_mut_ptr() as *mut [[f32; 4]; 4];
+            /* let joint_matrices_ptr = joint_matrices_data.expect("Can't get joint martices data").as_mut_ptr() as *mut [[f32; 4]; 4]; */
+            //  Write only memory target for new joint matrices.
+            let mut joint_matrices_slice: wgpu::WriteOnly<'_, [u8]> = joint_matrices_data.expect("Can't get joint matrices data").slice(..);
             for joint_matrix in &skeleton.joint_matrices {
                 // Here, the access can't be OOB either: The joint_matrix_idx
                 // will get incremented once for every joint matrix, and the
                 // length of the buffer is exactly the sum of all joint matrix
                 // vector lengths.
-                joint_matrices_ptr.add(joint_matrix_idx as usize).write_unaligned(joint_matrix.to_cols_array_2d());
+                //  ***WHY WAS THIS WRITE_UNALIGNED***
+                /* joint_matrices_ptr.add(joint_matrix_idx as usize).write_unaligned(joint_matrix.to_cols_array_2d()); */
+                joint_matrices_slice.slice(joint_matrix_idx as usize .. (joint_matrix_idx + 4 * 4 * 4) as usize)
+                    .copy_from_slice(bytemuck::cast_slice(&joint_matrix.to_cols_array_2d()));
                 joint_matrix_idx += 1;
             }
         }
