@@ -85,7 +85,7 @@ fn build_gpu_skinning_input_buffers(ctx: &NodeExecutionContext) -> PreSkinningBu
     for skeleton in ctx.data_core.skeleton_manager.skeletons() {
         // SAFETY: We are always accessing elements in bounds and all accesses are
         // aligned
-        unsafe {
+        /*unsafe*/ {
             let mut input = GpuSkinningInput {
                 base_position_offset: u32::MAX,
                 base_normal_offset: u32::MAX,
@@ -129,9 +129,8 @@ fn build_gpu_skinning_input_buffers(ctx: &NodeExecutionContext) -> PreSkinningBu
                 // will get incremented once for every joint matrix, and the
                 // length of the buffer is exactly the sum of all joint matrix
                 // vector lengths.
-                //  ***WHY WAS THIS WRITE_UNALIGNED***
                 /* joint_matrices_ptr.add(joint_matrix_idx as usize).write_unaligned(joint_matrix.to_cols_array_2d()); */
-                joint_matrices_slice.slice(joint_matrix_idx as usize .. (joint_matrix_idx + 4 * 4 * 4) as usize)
+                joint_matrices_slice.slice(joint_matrix_idx as usize .. (joint_matrix_idx as usize + 4 * 4 * std::mem::size_of::<f32>()))
                     .copy_from_slice(bytemuck::cast_slice(&joint_matrix.to_cols_array_2d()));
                 joint_matrix_idx += 1;
             }
