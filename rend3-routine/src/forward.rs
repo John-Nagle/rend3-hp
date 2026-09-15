@@ -187,8 +187,12 @@ impl<M: Material> ForwardRoutine<M> {
                 mapped_at_creation: true,
             }));
             {   profiling::scope!("Mapping GPU memory");
-                let mut mapping = per_camera_uniform_buffer.slice(..).get_mapped_range_mut();
-                StorageBuffer::new(&mut *mapping).write(&per_camera_uniform_values).unwrap();
+                let mut mapping = per_camera_uniform_buffer.slice(..).get_mapped_range_mut().expect("Unable to map range of GPU memory");
+                /* StorageBuffer::new(&mut mapping).write(&per_camera_uniform_values).unwrap(); */
+                let mut writer = encase::internal::Writer::new(&per_camera_uniform_values, WriteOnlyBuf(mapping.slice(..)), 0)
+                    .expect("Unable to create Writer to GPU");
+                per_camera_uniform_values.write_into(&mut writer);
+                //////mapping.copy_from_slice(per_camera_uniform_values.as_slice());
                 drop(mapping);
                 per_camera_uniform_buffer.unmap();
             }
