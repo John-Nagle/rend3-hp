@@ -119,18 +119,19 @@ impl<M: Material> ForwardRoutine<M> {
     pub fn new(args: ForwardRoutineCreateArgs<'_, M>) -> Self {
         profiling::scope!("PrimaryPasses::new");
 
-        let mut bgls: ArrayVec<&BindGroupLayout, 8> = ArrayVec::new();
+        let mut bgls: ArrayVec<Option<&BindGroupLayout>, 8> = ArrayVec::new();
         bgls.push(match args.routine_type {
-            RoutineType::Depth => &args.interfaces.depth_uniform_bgl,
-            RoutineType::Forward => &args.interfaces.forward_uniform_bgl,
+            RoutineType::Depth => Some(&args.interfaces.depth_uniform_bgl),
+            RoutineType::Forward => Some(&args.interfaces.forward_uniform_bgl),
         });
-        bgls.push(&args.per_material.bgl);
+        bgls.push(Some(&args.per_material.bgl));
         if args.renderer.profile == RendererProfile::GpuDriven {
-            bgls.push(args.data_core.d2_texture_manager.gpu_bgl())
+            bgls.push(Some(args.data_core.d2_texture_manager.gpu_bgl()))
         } else {
-            bgls.push(args.data_core.material_manager.get_bind_group_layout_cpu::<M>());
+            bgls.push(Some(args.data_core.material_manager.get_bind_group_layout_cpu::<M>()));
         }
-        bgls.extend(args.extra_bgls.iter().copied());
+        //////bgls.extend(args.extra_bgls.iter().copied());
+        bgls.extend(args.extra_bgls.iter().map(|&b| Some(b)));
 
         let pll = args.renderer.device.create_pipeline_layout(&PipelineLayoutDescriptor {
             label: Some(args.name),
