@@ -1,6 +1,6 @@
 use rend3::util::bind_merge::{BindGroupBuilder, BindGroupLayoutBuilder};
 use wgpu::{
-    AddressMode, BindingType, CompareFunction, Device, FilterMode, Sampler, SamplerBindingType, SamplerDescriptor,
+    AddressMode, BindingType, CompareFunction, Device, FilterMode, MipmapFilterMode, Sampler, SamplerBindingType, SamplerDescriptor,
     ShaderStages,
 };
 
@@ -47,11 +47,19 @@ fn create_sampler(device: &Device, filter: FilterMode, compare: Option<CompareFu
         address_mode_w: AddressMode::Repeat,
         mag_filter: filter,
         min_filter: filter,
-        mipmap_filter: filter,
+        mipmap_filter: to_mipmap_filter_mode(filter),
         lod_min_clamp: 0.0,
         lod_max_clamp: 100.0,
         compare,
         anisotropy_clamp: 1,
         border_color: None,
     })
+}
+
+/// Useful conversion between filter modes.
+fn to_mipmap_filter_mode(filter: FilterMode) -> MipmapFilterMode {
+    match filter {
+        FilterMode::Nearest => MipmapFilterMode::Nearest,
+        FilterMode::Linear => MipmapFilterMode::Linear,
+    }
 }
