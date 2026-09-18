@@ -73,7 +73,7 @@ fn build_gpu_skinning_input_buffers(ctx: &NodeExecutionContext) -> PreSkinningBu
         mapped_at_creation: true,
     });
 
-    let mut skinning_input_range = gpu_skinning_inputs.slice(..).get_mapped_range_mut();
+    let mut skinning_input_range = gpu_skinning_inputs.slice(..).get_mapped_range_mut().unwrap();
     let mut skinning_input_data = encase::DynamicStorageBuffer::new(&mut skinning_input_range);
     let mut joint_matrices_data = joint_matrices.slice(..).get_mapped_range_mut();
 
@@ -118,8 +118,9 @@ fn build_gpu_skinning_input_buffers(ctx: &NodeExecutionContext) -> PreSkinningBu
                     a => unreachable!("Unknown skinning output attribute {a:?}"),
                 }
             }
-
-            skinning_input_data.write(&input).unwrap();
+            // ***WRONG***
+            todo!();
+            ////////skinning_input_data.write(&input).unwrap();
 
             /* let joint_matrices_ptr = joint_matrices_data.expect("Can't get joint martices data").as_mut_ptr() as *mut [[f32; 4]; 4]; */
             //  Write only memory target for new joint matrices.
