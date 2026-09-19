@@ -209,13 +209,18 @@ pub async fn download_image(
 
     let (sender, receiver) = flume::bounded(1);
     buffer.slice(..).map_async(wgpu::MapMode::Read, move |_| sender.send(()).unwrap());
-    renderer.device.poll(wgpu::Maintain::WaitForSubmissionIndex(submit_index));
+    /* renderer.device.poll(wgpu::Maintain::WaitForSubmissionIndex(submit_index)); */
+    renderer.device.poll(wgpu::PollType::Wait {
+        submission_index: Some(submit_index),
+        timeout: Some(std::time::Duration::from_secs(60)), // Previous behavior, but more likely you want `None` instead.
+    })
+    .unwrap();
 
     receiver.recv_async().await.context("Failed to recieve message from map_async")?;
 
     let mapping = buffer.slice(..).get_mapped_range();
 
-    image::RgbaImage::from_raw(size.x, size.y, mapping.to_vec()).context("Failed to create image from mapping")
+    image::RgbaImage::from_raw(size.x, size.y, mapping?.to_vec()).context("Failed to create image from mapping")
 }
 
 pub fn compare_image_to_path(
