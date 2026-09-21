@@ -8,7 +8,7 @@ use rend3::{
     InstanceAdapterDevice, Renderer, ShaderPreProcessor,
 };
 use rend3_routine::base::BaseRenderGraph;
-use wgpu::{Instance, PresentMode, SurfaceError};
+use wgpu::{Instance, PresentMode, CurrentSurfaceTexture};
 use winit::{
     error::EventLoopError,
     event::{Event, WindowEvent, StartCause, DeviceEvent, DeviceId},
@@ -534,17 +534,29 @@ impl<T: 'static> ApplicationHandler<T> for Rend3ApplicationHandler<'_,T> {
                 );
                 self.stored_surface_info.requires_reconfigure = false;
             }
+            //  New surface texture status handling per WGPU 29.
             let surface_texture = match surface.get_current_texture() {
-                Ok(texture) => texture,
-                Err(SurfaceError::Outdated) => {
+                CurrentSurfaceTexture::Success(texture) => texture,
+                CurrentSurfaceTexture::Outdated | CurrentSurfaceTexture::Suboptimal(_) => {
                     self.stored_surface_info.requires_reconfigure = true;
                     return;
                 }
-                Err(SurfaceError::Timeout) => {
+                CurrentSurfaceTexture::Timeout => {
+                    log::error!("Rend3 current surface texture timeout");
                     return;
                 }
-                Err(SurfaceError::OutOfMemory | SurfaceError::Lost) => panic!("Surface OOM"),
-                Err(wgpu::SurfaceError::Other) => todo!(), // ***FIX** new case                
+                CurrentSurfaceTexture::Occluded => {
+                    return;
+                }
+                CurrentSurfaceTexture::Lost => {
+                    self.stored_surface_info.requires_reconfigure = true;
+                    log::error!("Rend3 current surface texture lost - trying reconfigure.");
+                    return;
+                }
+                CurrentSurfaceTexture::Validation => {
+                    log::error!("Rend3 current surface texture validation error.");
+                    return;
+                }
             };
             let current_time = web_time::Instant::now();
             let delta_t_seconds = (current_time - self.previous_time).as_secs_f32();
