@@ -576,7 +576,8 @@ impl<T: 'static> ApplicationHandler<T> for Rend3ApplicationHandler<'_,T> {
                 delta_t_seconds,
             });
 
-            surface_texture.present();
+            /* surface_texture.present(); Moved to Queue */
+            self.iad.queue.present(surface_texture);
 
             self.app.handle_redraw_done(&self.window); // standard action is to redraw, but that can be overridden.
         } else {
