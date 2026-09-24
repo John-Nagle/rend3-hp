@@ -18,3 +18,8 @@ rend3 = { path = "../rend3" }
 wgpu = { workspace = true }
 wgpu-types = { workspace = true }
 glam = { workspace = true }
+
+ahash = { version = "0.8.12", default-features = false, features = [
+  "no-rng", # we don't need DOS-protection, so we let users opt-in to it instead
+  "std",
+] }
