@@ -239,7 +239,8 @@ pub fn main() {
                 graph.execute(&renderer, &mut eval_output);
 
                 // Present the frame
-                frame.present();
+                /* frame.present(); */
+                renderer.queue.present(frame);
             }
             // Other events we don't care about
             _ => {}
