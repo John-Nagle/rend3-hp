@@ -182,18 +182,22 @@ mod test {
 
     impl TestContext {
         fn new() -> Option<Self> {
+            /*  WGPU30 breaking changes.
             let backends = wgpu::Backends::from_env().unwrap_or(wgpu::Backends::all());
             let instance =
                 wgpu::Instance::new(&wgpu::InstanceDescriptor { backends, ..wgpu::InstanceDescriptor::default() });
-            let adapter = pollster::block_on(wgpu::util::initialize_adapter_from_env_or_default(&instance, None))?;
+            */
+            let instance_descriptor = wgpu::InstanceDescriptor::new_without_display_handle_from_env();
+            let instance = wgpu::Instance::new(instance_descriptor);
+            let adapter = pollster::block_on(wgpu::util::initialize_adapter_from_env_or_default(&instance, None)).ok()?;
             let (device, queue) = pollster::block_on(adapter.request_device(
                 &wgpu::DeviceDescriptor {
                     label: None,
                     required_features: wgpu::Features::empty(),
                     required_limits: wgpu::Limits::default(),
                     memory_hints: wgpu::MemoryHints::default(),
+                    ..Default::default()
                 },
-                None,
             ))
             .ok()?;
 
@@ -230,9 +234,9 @@ mod test {
             self.queue.submit(Some(encoder.finish()));
 
             staging.slice(..).map_async(wgpu::MapMode::Read, |_| ());
-            self.device.poll(wgpu::PollType::Wait).unwrap();
+            self.device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
 
-            let res = bytemuck::cast_slice(&staging.slice(..).get_mapped_range()).to_vec();
+            let res = bytemuck::cast_slice(&staging.slice(..).get_mapped_range().unwrap()).to_vec();
 
             res
         }
