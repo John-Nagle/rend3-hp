@@ -196,7 +196,8 @@ impl rend3_framework::App for EguiExample {
                 );
             }
             ui.label("Want to get rusty?");
-            if ui.add(egui::widgets::ImageButton::new((self.rust_logo, egui::Vec2::splat(64.0)))).clicked() {
+            /* if ui.add(egui::widgets::ImageButton::new((self.rust_logo, egui::Vec2::splat(64.0)))).clicked() { EGUI change */
+            if ui.add(egui::Button::image((self.rust_logo, egui::Vec2::splat(64.0)))).clicked() {
                 webbrowser::open("https://www.rust-lang.org").expect("failed to open URL");
             }
         });
