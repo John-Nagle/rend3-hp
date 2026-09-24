@@ -230,7 +230,7 @@ mod test {
             self.queue.submit(Some(encoder.finish()));
 
             staging.slice(..).map_async(wgpu::MapMode::Read, |_| ());
-            self.device.poll(wgpu::Maintain::Wait);
+            self.device.poll(wgpu::PollType::Wait).unwrap();
 
             let res = bytemuck::cast_slice(&staging.slice(..).get_mapped_range()).to_vec();
 

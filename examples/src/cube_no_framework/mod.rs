@@ -191,7 +191,12 @@ pub fn main() {
             // Render!
             winit::event::Event::WindowEvent { event: winit::event::WindowEvent::RedrawRequested, .. } => {
                 // Get a frame
-                let frame = surface.get_current_texture().unwrap();
+                let current_texture = surface.get_current_texture();
+                let frame = 
+                    match current_texture {
+                        wgpu::CurrentSurfaceTexture::Success(frame) => frame,
+                        _ => { panic!("Current surface texture invalid: {:?}", current_texture); }
+                    };                      
 
                 // Swap the instruction buffers so that our frame's changes can be processed.
                 renderer.swap_instruction_buffers();
