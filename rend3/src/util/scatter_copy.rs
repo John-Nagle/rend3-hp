@@ -187,19 +187,22 @@ mod test {
             let instance =
                 wgpu::Instance::new(&wgpu::InstanceDescriptor { backends, ..wgpu::InstanceDescriptor::default() });
             */
-            let instance_descriptor = wgpu::InstanceDescriptor::new_without_display_handle_from_env();
+            let mut instance_descriptor = wgpu::InstanceDescriptor::new_without_display_handle_from_env();
+            instance_descriptor.backends = wgpu::Backends::from_env().unwrap_or(wgpu::Backends::all());
             let instance = wgpu::Instance::new(instance_descriptor);
             let adapter = pollster::block_on(wgpu::util::initialize_adapter_from_env_or_default(&instance, None)).ok()?;
             let (device, queue) = pollster::block_on(adapter.request_device(
                 &wgpu::DeviceDescriptor {
                     label: None,
-                    required_features: wgpu::Features::empty(),
+                    //////required_features: wgpu::Features::empty(),
+                    required_features: crate::get_gpu_driven_required_features(),
                     required_limits: wgpu::Limits::default(),
                     memory_hints: wgpu::MemoryHints::default(),
                     ..Default::default()
                 },
             ))
             .ok()?;
+            println!("Device acquired: {:?}\nAdapter info: {:?}", device, device.adapter_info());  // DEBUG
 
             Some(Self { device, queue })
         }
