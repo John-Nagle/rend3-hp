@@ -107,14 +107,14 @@ impl ScatterCopy {
             .slice(..)
             .get_mapped_range_mut()
             .expect("Unable to map range of GPU memory");
-        let mut mapped_range = mapped_range.slice(..);     
+        let mut mapped_range_slice = mapped_range.slice(..);     
         //  Output buffer format is an 8-byte header, followed by blocks of a 4-byte header plus data.    
         //  Generate 8-byte header.
         let count_u32: u32 = count.try_into().unwrap();
         let hdr0 = (size_of_t_u32 / 4).to_le_bytes();
         let hdr1 = count_u32.to_le_bytes();
-        mapped_range.slice(0..4).copy_from_slice(hdr0.as_slice());
-        mapped_range.slice(4..8).copy_from_slice(hdr1.as_slice());
+        mapped_range_slice.slice(0..4).copy_from_slice(hdr0.as_slice());
+        mapped_range_slice.slice(4..8).copy_from_slice(hdr1.as_slice());
         //  ***RECHECK ALL OFFSETS***
         for (idx, item) in data_iterator.enumerate() {
             // Add four bytes for the fixed header.
@@ -122,9 +122,9 @@ impl ScatterCopy {
             let range_end_bytes = range_start_bytes + stride_bytes as usize;
             //  Add header word for this entry, 4 bytes
             let hdrn = item.word_offset.to_le_bytes();
-            mapped_range.slice(range_start_bytes..range_start_bytes+hdrn.len()).copy_from_slice(hdrn.as_slice());
+            mapped_range_slice.slice(range_start_bytes..range_start_bytes+hdrn.len()).copy_from_slice(hdrn.as_slice());
             //  ***CHECK RANGE*** This looks like an off by 1 error. Does stride_bytes contain the hdrn header word?
-            let mut writer = encase::internal::Writer::new(&item.data, WriteOnlyBuf(mapped_range.slice(range_start_bytes + hdrn.len() .. range_end_bytes)), 0)
+            let mut writer = encase::internal::Writer::new(&item.data, WriteOnlyBuf(mapped_range_slice.slice(range_start_bytes + hdrn.len() .. range_end_bytes)), 0)
                 .expect("Unable to create Writer to GPU");
             item.data.write_into(&mut writer);
         }
@@ -262,6 +262,7 @@ mod test {
         scatter.execute_copy(&ctx.device, &mut encoder, &buffer, [ScatterData { word_offset: 0, data: 1.0_f32 }]);
 
         assert_eq!(&ctx.readback::<f32>(encoder, &buffer, 16), &[1.0, 5.0, 5.0, 5.0]);
+        println!("single_word test complete.");
     }
 
     #[test]
