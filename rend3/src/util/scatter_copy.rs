@@ -211,7 +211,9 @@ mod test {
             self.device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
                 label: Some("target buffer"),
                 contents: bytemuck::cast_slice(data),
-                usage: wgpu::BufferUsages::all() - wgpu::BufferUsages::MAP_READ - wgpu::BufferUsages::MAP_WRITE,
+                usage: wgpu::BufferUsages::all() - wgpu::BufferUsages::MAP_READ - wgpu::BufferUsages::MAP_WRITE
+                    - wgpu::BufferUsages::BLAS_INPUT
+                    - wgpu::BufferUsages::TLAS_INPUT, 
             })
         }
 
