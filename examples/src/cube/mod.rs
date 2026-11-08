@@ -136,6 +136,12 @@ impl rend3_framework::App for CubeExample {
                 intensity: 4.0,
             }));
         }
+        /*  BAD - can't get to IAD
+        println!("Limits at cube setup: device {:?}\nadapter {:?}", 
+            context.window.iad.device.limits(), // ***TEMP TEST***
+            context.iad.adapter.limits());
+        */
+
     }
 
     fn handle_redraw(&mut self, context: rend3_framework::RedrawContext<'_>) {

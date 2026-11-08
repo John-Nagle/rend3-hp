@@ -36,7 +36,7 @@ pub const GPU_DRIVEN_REQUIRED_FEATURES: Features = {
 
 pub fn get_gpu_driven_required_features() -> Features {
     //  Can't make this const since Features was made a struct in WGPU between 24 and 30, and .bits is no longer const.
-    Features::from_bits_truncate(
+    let features_wanted = Features::from_bits_truncate(
         Features::IMMEDIATES.bits() // was called "PUSH_CONSTANTS" - WGPU change.
             | Features::TEXTURE_COMPRESSION_BC.bits()
             | Features::DEPTH_CLIP_CONTROL.bits()
@@ -45,7 +45,14 @@ pub fn get_gpu_driven_required_features() -> Features {
             | Features::PARTIALLY_BOUND_BINDING_ARRAY.bits()
             | Features::MULTI_DRAW_INDIRECT_COUNT.bits()
             /* | Features::SPIRV_SHADER_PASSTHROUGH.bits(), REMOVED FROM WGPU */
-    )
+            //  New for WGPU 30
+            | Features::BUFFER_BINDING_ARRAY.bits()
+            | Features::TEXTURE_BINDING_ARRAY.bits()
+            | Features::STORAGE_RESOURCE_BINDING_ARRAY.bits()
+            | Features::SAMPLED_TEXTURE_AND_STORAGE_BUFFER_ARRAY_NON_UNIFORM_INDEXING.bits()
+            );
+    let features_default = Features::default(); /* { features_wgpu: FeaturesWGPU::default(), features_webgpu: FeaturesWebGPU::default() }; */
+    features_wanted.union(features_default)    // add all defaults
 }
 
 /// Features required to run in the GpuDriven profile.
@@ -116,7 +123,7 @@ pub const GPU_REQUIRED_LIMITS: Limits = Limits {
     max_immediate_size: 128,
     min_uniform_buffer_offset_alignment: 256,
     min_storage_buffer_offset_alignment: 256,
-    max_inter_stage_shader_variables: 60,
+    max_inter_stage_shader_variables: /*60, not supported any more*/ 31,
     max_compute_workgroup_storage_size: 16352,
     max_compute_invocations_per_workgroup: 256,
     max_compute_workgroup_size_x: 256,
@@ -127,6 +134,7 @@ pub const GPU_REQUIRED_LIMITS: Limits = Limits {
     max_non_sampler_bindings: 1_000_000,
     max_color_attachment_bytes_per_sample: 32, // From WGPU 0.20 (JN)
     max_color_attachments: 8,
+    max_binding_array_elements_per_shader_stage: 500000, /* new in WGPU 30*/
     /* min_subgroup_size: 0, */
     /* max_subgroup_size: 0, */
     ..Limits::defaults()    // Use WGPU defaults for 20+ new fields.
@@ -600,6 +608,7 @@ pub async fn create_iad(
                 .await
                 .map_err(|_| RendererInitializationError::RequestDeviceFailed)?;
 
+                println!("Device acquired: {:?}\nAdapter info: {:?}\nLimits: {:?}", device, device.adapter_info(), device.limits());  // ***DEBUG TEMP***
             return Ok(InstanceAdapterDevice {
                 instance: Arc::new(instance),
                 adapter: Arc::new(adapter.inner),
