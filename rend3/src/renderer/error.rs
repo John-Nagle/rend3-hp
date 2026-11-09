@@ -10,6 +10,7 @@ pub enum LimitType {
     DynamicUniformBuffersPerPipelineLayout,
     DynamicStorageBuffersPerPipelineLayout,
     SampledTexturesPerShaderStages,
+    MaxBindingArrayElementsPerShaderStage,
     SamplersPerShaderStages,
     StorageBuffersPerShaderStages,
     StorageTexturesPerShaderStages,

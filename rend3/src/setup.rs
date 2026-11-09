@@ -134,7 +134,8 @@ pub const GPU_REQUIRED_LIMITS: Limits = Limits {
     max_non_sampler_bindings: 1_000_000,
     max_color_attachment_bytes_per_sample: 32, // From WGPU 0.20 (JN)
     max_color_attachments: 8,
-    max_binding_array_elements_per_shader_stage: 500000, /* new in WGPU 30*/
+    // Minimum required. The texture manager sizes its array from the device's actual maximum.
+    max_binding_array_elements_per_shader_stage: STARTING_2D_TEXTURES as _, /* new in WGPU 30*/
     /* min_subgroup_size: 0, */
     /* max_subgroup_size: 0, */
     ..Limits::defaults()    // Use WGPU defaults for 20+ new fields.
@@ -381,6 +382,14 @@ pub fn check_limits(profile: RendererProfile, device_limits: &Limits) -> Result<
             LimitType::MinSubgroupSize,
         )?,
         */
+        // Since wgpu 25, textures in a binding array count against this limit, not
+        // `max_sampled_textures_per_shader_stage`. Pass the device's real maximum through;
+        // anything left to `Default` is 0 and bind group layout creation fails.
+        max_binding_array_elements_per_shader_stage: check_limit_unlimited(
+            device_limits.max_binding_array_elements_per_shader_stage,
+            required_limits.max_binding_array_elements_per_shader_stage,
+            LimitType::MaxBindingArrayElementsPerShaderStage,
+        )?,
         ..Default::default()    // Use WGPU defaults for 20+ new fields.
     })
 }
