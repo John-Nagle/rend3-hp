@@ -1,3 +1,4 @@
+enable wgpu_binding_array;
 {{include "rend3-routine/structures.wgsl"}}
 {{include "rend3-routine/structures_object.wgsl"}}
 {{include "rend3-routine/material.wgsl"}}
