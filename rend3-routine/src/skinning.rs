@@ -74,8 +74,14 @@ fn build_gpu_skinning_input_buffers(ctx: &NodeExecutionContext) -> PreSkinningBu
     });
 
     let mut skinning_input_range = gpu_skinning_inputs.slice(..).get_mapped_range_mut().unwrap();
-    let mut skinning_input_data = encase::DynamicStorageBuffer::new(&mut skinning_input_range);
-    let mut joint_matrices_data = joint_matrices.slice(..).get_mapped_range_mut();
+    // The mapped range is write-only in wgpu 30, so wrap it in a BufferMut for encase.
+    let mut skinning_input_data = encase::DynamicStorageBuffer::new(WriteOnlyBuf(skinning_input_range.slice(..)));
+    // Unwrap once, outside the skeleton loop. (Calling expect() on it inside the loop
+    // moves it on the first iteration.)
+    let mut joint_matrices_data =
+        joint_matrices.slice(..).get_mapped_range_mut().expect("Can't get joint matrices data");
+    //  Write only memory target for new joint matrices.
+    let mut joint_matrices_slice: wgpu::WriteOnly<'_, [u8]> = joint_matrices_data.slice(..);
 
     // Skeletons have a variable number of joints, so we need to keep track of
     // the global index here.
@@ -118,13 +124,8 @@ fn build_gpu_skinning_input_buffers(ctx: &NodeExecutionContext) -> PreSkinningBu
                     a => unreachable!("Unknown skinning output attribute {a:?}"),
                 }
             }
-            // ***WRONG***
-            todo!();
-            ////////skinning_input_data.write(&input).unwrap();
+            skinning_input_data.write(&input).unwrap();
 
-            /* let joint_matrices_ptr = joint_matrices_data.expect("Can't get joint martices data").as_mut_ptr() as *mut [[f32; 4]; 4]; */
-            //  Write only memory target for new joint matrices.
-            let mut joint_matrices_slice: wgpu::WriteOnly<'_, [u8]> = joint_matrices_data.expect("Can't get joint matrices data").slice(..);
             for joint_matrix in &skeleton.joint_matrices {
                 // Here, the access can't be OOB either: The joint_matrix_idx
                 // will get incremented once for every joint matrix, and the
@@ -142,6 +143,9 @@ fn build_gpu_skinning_input_buffers(ctx: &NodeExecutionContext) -> PreSkinningBu
         }
     }
 
+    // Release the borrows of the mapped ranges before dropping the ranges and unmapping.
+    drop(skinning_input_data);
+    drop(joint_matrices_slice);
     drop(skinning_input_range);
     drop(joint_matrices_data);
     gpu_skinning_inputs.unmap();
