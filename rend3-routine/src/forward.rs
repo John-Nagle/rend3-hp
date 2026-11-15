@@ -5,7 +5,7 @@
 use std::{cmp::Ordering, marker::PhantomData, sync::Arc};
 use encase::internal::WriteInto;
 use arrayvec::ArrayVec;
-use encase::{ShaderSize, StorageBuffer};
+use encase::{ShaderSize};
 use ordered_float::OrderedFloat;
 use rend3::{
     graph::{DataHandle, NodeResourceUsage, RenderGraph, RenderPassTargets},

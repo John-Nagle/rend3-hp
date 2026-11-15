@@ -3,7 +3,6 @@
 use std::{marker::PhantomData, ops::Deref, sync::Arc};
 
 use encase::{private::WriteInto, ShaderType};
-use encase::internal::BufferMut;
 use wgpu::{Buffer, BufferAddress, BufferDescriptor, BufferUsages, Device, Queue};
 use super::scatter_copy::WriteOnlyBuf;
 

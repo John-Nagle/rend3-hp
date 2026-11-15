@@ -1,7 +1,6 @@
 use std::{borrow::Cow, mem};
 
 use encase::{ShaderSize, ShaderType};
-use encase::internal::WriteInto;
 use glam::Mat4;
 use rend3::{
     graph::{NodeExecutionContext, RenderGraph},
