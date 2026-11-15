@@ -202,8 +202,6 @@ mod test {
                 },
             ))
             .ok()?;
-            println!("Device acquired: {:?}\nAdapter info: {:?}", device, device.adapter_info());  // DEBUG
-
             Some(Self { device, queue })
         }
 
@@ -262,7 +260,6 @@ mod test {
         scatter.execute_copy(&ctx.device, &mut encoder, &buffer, [ScatterData { word_offset: 0, data: 1.0_f32 }]);
 
         assert_eq!(&ctx.readback::<f32>(encoder, &buffer, 16), &[1.0, 5.0, 5.0, 5.0]);
-        println!("single_word test complete.");
     }
 
     #[test]

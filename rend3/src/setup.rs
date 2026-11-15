@@ -617,7 +617,6 @@ pub async fn create_iad(
                 .await
                 .map_err(|_| RendererInitializationError::RequestDeviceFailed)?;
 
-                println!("Device acquired: {:?}\nAdapter info: {:?}\nLimits: {:?}", device, device.adapter_info(), device.limits());  // ***DEBUG TEMP***
             return Ok(InstanceAdapterDevice {
                 instance: Arc::new(instance),
                 adapter: Arc::new(adapter.inner),
