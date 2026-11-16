@@ -57,8 +57,6 @@ impl<'a> UploadChainer<'a> {
         let mapping = staging_buffer.slice(..).get_mapped_range_mut();
         let mut mapping = mapping.expect("Error accessing staging buffer"); // panics on range error
         for upload in &self.uploads {
-            /* mapping[upload.staging_offset as usize..][..upload.data.len()].copy_from_slice(upload.data); per WGPU changelog */
-            /* mapping.slice(upload.staging_offset as usize .. upload.data.len()).copy_from_slice(upload.data); */
             // Range is offset..offset+len. (A previous port used offset..len, which is empty
             // for every upload after the first one.)
             let start = upload.staging_offset as usize;

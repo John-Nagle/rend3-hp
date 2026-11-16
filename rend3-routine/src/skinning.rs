@@ -130,8 +130,6 @@ fn build_gpu_skinning_input_buffers(ctx: &NodeExecutionContext) -> PreSkinningBu
                 // will get incremented once for every joint matrix, and the
                 // length of the buffer is exactly the sum of all joint matrix
                 // vector lengths.
-                /* joint_matrices_ptr.add(joint_matrix_idx as usize).write_unaligned(joint_matrix.to_cols_array_2d()); */
-                /* joint_matrices_slice.slice(joint_matrix_idx as usize .. (joint_matrix_idx as usize + 4 * 4 * std::mem::size_of::<f32>())) */
                 // joint_matrix_idx counts matrices, not bytes; each matrix is 64 bytes.
                 let matrix_bytes = 4 * 4 * std::mem::size_of::<f32>();
                 let start = joint_matrix_idx as usize * matrix_bytes;
