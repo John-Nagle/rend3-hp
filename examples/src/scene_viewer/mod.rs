@@ -712,11 +712,16 @@ pub fn main() {
 
 #[cfg(test)]
 #[rend3_test::test_attr]
+/// Simple test scene to see if we can render anything to spec.
 async fn default_scene() {
+    use std::f32::consts::PI;
     let mut app = SceneViewer::default();
     app.file_to_load = Some("src/scene_viewer/resources/WaterBottle.glb".into());
     app.wait_for_load = true;
     app.samples = SampleCount::Four;
+    app.camera_location = Vec3A::new(-0.25, 0.0, 0.0);
+    app.camera_pitch = 0.0;
+    app.camera_yaw = PI*1.5;
 
     crate::tests::test_app(crate::tests::TestConfiguration {
         app,
