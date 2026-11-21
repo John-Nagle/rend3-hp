@@ -88,7 +88,7 @@ fn fs_main(vs_out: VertexOutput) {
 
     let coords = vs_out.coords0;
     let uvdx = dpdx(coords);
-    let uvdy = dpdx(coords);
+    let uvdy = dpdy(coords);
 
     var alpha = 1.0;
     if (extract_material_flag(material.flags, FLAGS_ALBEDO_ACTIVE)) {
