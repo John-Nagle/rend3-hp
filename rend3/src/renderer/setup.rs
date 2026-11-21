@@ -29,20 +29,6 @@ pub fn create_renderer(
     let downlevel = iad.adapter.get_downlevel_capabilities();
 
     let camera_state = CameraState::new(Camera::default(), handedness, aspect_ratio);
-/*
-    let d2_texture_manager = TextureManager::new(
-        &iad.device,
-        iad.profile,
-        limits.max_sampled_textures_per_shader_stage,
-        TextureViewDimension::D2,
-    );
-    let d2c_texture_manager = TextureManager::new(
-        &iad.device,
-        iad.profile,
-        limits.max_sampled_textures_per_shader_stage,
-        TextureViewDimension::Cube,
-    );
-*/
     // Texture arrays are bounded by the binding-array limit; keep the older sampled-texture
     // limit as an upper bound too.
     let max_textures =
