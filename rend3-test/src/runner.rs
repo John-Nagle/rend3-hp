@@ -5,6 +5,8 @@ use std::{fs::create_dir_all, ops::Deref, path::Path, sync::Arc};
 use anyhow::{bail, ensure, Context, Result};
 use glam::UVec2;
 use image::buffer::ConvertBuffer;
+use image::imageops::{overlay};
+use image::{Rgba};
 use rend3::{
     types::{Handedness, SampleCount},
     Renderer,
@@ -180,6 +182,7 @@ impl TestRunner {
     }
 }
 
+/// Get the image back from the GPU
 pub async fn download_image(
     renderer: &Renderer,
     texture: wgpu::Texture,
@@ -220,7 +223,13 @@ pub async fn download_image(
 
     let mapping = buffer.slice(..).get_mapped_range();
 
-    image::RgbaImage::from_raw(size.x, size.y, mapping?.to_vec()).context("Failed to create image from mapping")
+    //  This is a RGBA image and may contain transparent holes.
+    let img = image::RgbaImage::from_raw(size.x, size.y, mapping?.to_vec()).context("Failed to create image from mapping")?;
+    //  So we composite it onto a black background.
+    let black_opaque = Rgba([0, 0, 0, 255]);
+    let mut composite = image::RgbaImage::from_pixel(img.width(), img.height(), black_opaque);
+    overlay(&mut composite, &img, 0, 0);
+    Ok(composite)
 }
 
 pub fn compare_image_to_path(
