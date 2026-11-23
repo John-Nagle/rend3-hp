@@ -9,7 +9,7 @@ cargo-timing*
 Cargo.lock
 
 /profile.json
-/examples/src/scene_viewer/resources/
+/examples/src/scene_viewer/resources/*.blend*
 !/examples/src/scene_viewer/resources/skybox
 !/examples/src/scene_viewer/resources/*.glb
 
