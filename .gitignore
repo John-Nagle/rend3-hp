@@ -10,8 +10,10 @@ Cargo.lock
 
 /profile.json
 /examples/src/scene_viewer/resources/*.blend*
-!/examples/src/scene_viewer/resources/skybox
-!/examples/src/scene_viewer/resources/*.glb
+# !/examples/src/scene_viewer/resources/skybox
+# !/examples/src/scene_viewer/resources/*.glb
+# Bistro is too big for Github.
+/examples/src/scene_viewer/resources/Bistro.glb
 
 *-diff.png
 *-success.png
