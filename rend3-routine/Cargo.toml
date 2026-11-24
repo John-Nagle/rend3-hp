@@ -15,12 +15,12 @@ rust-version = "1.71"
 arrayvec = "0.7"
 bitflags = "2"
 bytemuck = "1"
-codespan-reporting = "0.11"
-encase = { version = "0.12" }
+codespan-reporting = "0.13"
+encase = { version = "0.13" }
 flume = "0.11"
 glam = { workspace = true, features = ["bytemuck"] }
 log = "0.4"
-naga = { version = "22.1", features = ["wgsl-in"] }
+naga = { version = "30.0", features = ["wgsl-in", "stderr"] }
 ordered-float = "4"
 parking_lot = "0.12"
 profiling = {version = "1", default-features = false }

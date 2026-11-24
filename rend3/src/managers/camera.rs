@@ -90,16 +90,20 @@ fn compute_projection_matrix(data: Camera, handedness: Handedness, aspect_ratio:
         CameraProjection::Orthographic { size } => {
             let half = size * 0.5;
             if handedness == Handedness::Left {
-                Mat4::orthographic_lh(-half.x, half.x, -half.y, half.y, half.z, -half.z)
+                /* Mat4::orthographic_lh(-half.x, half.x, -half.y, half.y, half.z, -half.z) RENAMED IN GLAM */
+                glam::camera::lh::proj::directx::orthographic(-half.x, half.x, -half.y, half.y, half.z, -half.z)
             } else {
-                Mat4::orthographic_rh(-half.x, half.x, -half.y, half.y, half.z, -half.z)
+                /* Mat4::orthographic_rh(-half.x, half.x, -half.y, half.y, half.z, -half.z) RENAMED IN GLAm */
+                glam::camera::rh::proj::directx::orthographic(-half.x, half.x, -half.y, half.y, half.z, -half.z)
             }
         }
         CameraProjection::Perspective { vfov, near } => {
             if handedness == Handedness::Left {
-                Mat4::perspective_infinite_reverse_lh(vfov.to_radians(), aspect_ratio, near)
+                /* Mat4::perspective_infinite_reverse_lh(vfov.to_radians(), aspect_ratio, near) RENAMED IN GLAM */
+                glam::camera::rh::proj::directx::perspective_infinite_reverse(vfov.to_radians(), aspect_ratio, near)
             } else {
-                Mat4::perspective_infinite_reverse_rh(vfov.to_radians(), aspect_ratio, near)
+                /* Mat4::perspective_infinite_reverse_rh(vfov.to_radians(), aspect_ratio, near) RENAMED IN GLAM */
+                glam::camera::rh::proj::directx::perspective_infinite_reverse(vfov.to_radians(), aspect_ratio, near)
             }
         }
         CameraProjection::Raw(proj) => proj,

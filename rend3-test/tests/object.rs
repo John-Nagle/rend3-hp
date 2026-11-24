@@ -79,7 +79,8 @@ pub async fn multi_frame_add() -> anyhow::Result<()> {
     let base_matrix = Mat4::from_translation(Vec3::new(0.5, 0.5, 0.0)) * Mat4::from_scale(Vec3::new(0.5, 1.0, 1.0));
 
     runner.set_camera_data(Camera {
-        projection: rend3::types::CameraProjection::Raw(Mat4::orthographic_lh(0.0, 2.0, 16.0, 0.0, 0.0, 1.0)),
+        /* projection: rend3::types::CameraProjection::Raw(Mat4::orthographic_lh(0.0, 2.0, 16.0, 0.0, 0.0, 1.0)), REMOVED FROM GLAM */
+        projection: rend3::types::CameraProjection::Raw(glam::camera::lh::proj::directx::orthographic(0.0, 2.0, 16.0, 0.0, 0.0, 1.0)),
         view: Mat4::IDENTITY,
     });
 

@@ -22,7 +22,8 @@ pub async fn shadows() -> anyhow::Result<()> {
 
     runner.set_camera_data(Camera {
         projection: rend3::types::CameraProjection::Orthographic { size: Vec3A::new(2.5, 2.5, 5.0) },
-        view: Mat4::look_at_lh(Vec3::new(0.0, 1.0, -1.0), Vec3::ZERO, Vec3::Y),
+        /* view: Mat4::look_at_lh(Vec3::new(0.0, 1.0, -1.0), Vec3::ZERO, Vec3::Y), REMOVED FROM GLAM */
+        view: glam::camera::lh::view::look_at_mat4(Vec3::new(0.0, 1.0, -1.0), Vec3::ZERO, Vec3::Y),
     });
 
     let file_name = "tests/results/shadow/plane.png";

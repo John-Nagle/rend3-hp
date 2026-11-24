@@ -128,7 +128,8 @@ pub async fn coordinate_space() -> anyhow::Result<()> {
     for (name, _right_vector, up_vector, camera_vector) in tests {
         runner.set_camera_data(Camera {
             projection: rend3::types::CameraProjection::Raw(Mat4::IDENTITY),
-            view: Mat4::look_at_lh(camera_vector, Vec3::ZERO, up_vector),
+            /* view: Mat4::look_at_lh(camera_vector, Vec3::ZERO, up_vector), REMOVED FROM GLAM */
+            view: glam::camera::lh::view::look_at_mat4(camera_vector, Vec3::ZERO, up_vector),
         });
 
         let file_name = format!("tests/results/simple/coordinate-space-{name}.png");

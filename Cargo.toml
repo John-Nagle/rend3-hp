@@ -13,13 +13,13 @@ members = [
 ]
 
 [workspace.package]
-version = "0.30.0"
+version = "0.30.1"
 
 [workspace.dependencies]
 wgpu = "30"
 wgpu-types = "30"
 wgpu-profiler = "^0.28"
-glam = { version = "^0.33", features = ["encase"] }
+glam = { version = "^0.34", features = ["encase-013"] }
 
 [profile.ci]
 inherits = "dev"

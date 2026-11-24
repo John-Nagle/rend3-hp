@@ -69,7 +69,8 @@ pub async fn sample_coverage() -> anyhow::Result<()> {
     }
 
     runner.set_camera_data(Camera {
-        projection: rend3::types::CameraProjection::Raw(Mat4::orthographic_lh(0.0, 64.0, 64.0, 0.0, 0.0, 1.0)),
+        /* projection: rend3::types::CameraProjection::Raw(Mat4::orthographic_lh(0.0, 64.0, 64.0, 0.0, 0.0, 1.0)), REMOVED FROM GLAM */
+        projection: rend3::types::CameraProjection::Raw(glam::camera::lh::proj::directx::orthographic(0.0, 64.0, 64.0, 0.0, 0.0, 1.0)),
         view: Mat4::IDENTITY,
     });
 
