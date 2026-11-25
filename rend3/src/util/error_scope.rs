@@ -14,7 +14,8 @@ use wgpu::{ Device, ErrorScopeGuard };
 /// on WebGPU. This will always return success on WebGPU.
 #[must_use = "All error scopes must end in a call to `end`"]
 pub struct AllocationErrorScope<'a> {
-    /// Relevant device.
+    /// Relevant device. Not currently used.
+    #[allow(dead_code)]
     device: &'a Device,
     /// Thread-local error scope, which must be carried with the error.
     /// It's an option so we can use "take" and take ownership, so "pop" can consume it.

@@ -1,4 +1,4 @@
-use glam::{Mat4, Vec3, Vec3A};
+use glam::{Vec3, Vec3A};
 use rend3_types::{Camera, CameraProjection, Handedness};
 
 use crate::managers::{CameraState, InternalDirectionalLight};
