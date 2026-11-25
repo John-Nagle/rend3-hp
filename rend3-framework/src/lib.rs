@@ -172,6 +172,7 @@ pub trait App<T: 'static = ()> {
         profiling::scope!("creating window");
 
         let event_loop = EventLoop::with_user_event().build()?;
+        #[allow(deprecated)] // Hopefully winit won't remove this old feature, or we have a lot of work to do.
         let window = event_loop.create_window(window_attributes).expect("Could not build window"); // (JN) for winit 0.30
 
         #[cfg(target_arch = "wasm32")]

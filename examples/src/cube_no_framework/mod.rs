@@ -65,6 +65,7 @@ pub fn main() {
         let mut window_attributes = winit::window::WindowAttributes::default();
         window_attributes = window_attributes.with_title("rend3 cube");
         //////builder.build(&event_loop).expect("Could not build window")
+        #[allow(deprecated)] // Hopefully winit won't remove this old feature, or we have a lot of work to do.
         event_loop.create_window(window_attributes).expect("Could not build window") // (JN) for winit 0.30
     };
 
@@ -171,7 +172,7 @@ pub fn main() {
     });
 
     let mut resolution = glam::UVec2::new(window_size.width, window_size.height);
-
+    #[allow(deprecated)] // Hopefully winit won't remove this old feature, or we have a lot of work to do.
     event_loop
         .run(move |event, _event_loop_window_target| match event {
             // Window was resized, need to resize renderer.
