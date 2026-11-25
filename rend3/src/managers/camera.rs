@@ -100,7 +100,7 @@ fn compute_projection_matrix(data: Camera, handedness: Handedness, aspect_ratio:
         CameraProjection::Perspective { vfov, near } => {
             if handedness == Handedness::Left {
                 /* Mat4::perspective_infinite_reverse_lh(vfov.to_radians(), aspect_ratio, near) RENAMED IN GLAM */
-                glam::camera::rh::proj::directx::perspective_infinite_reverse(vfov.to_radians(), aspect_ratio, near)
+                glam::camera::lh::proj::directx::perspective_infinite_reverse(vfov.to_radians(), aspect_ratio, near)
             } else {
                 /* Mat4::perspective_infinite_reverse_rh(vfov.to_radians(), aspect_ratio, near) RENAMED IN GLAM */
                 glam::camera::rh::proj::directx::perspective_infinite_reverse(vfov.to_radians(), aspect_ratio, near)
