@@ -18,8 +18,8 @@ mod tests {
         diagnostic::{Diagnostic, Label},
         files::SimpleFile,
         term::{
-            self,
             termcolor::{ColorChoice, StandardStream},
+            emit_to_io_write
         },
     };
     use naga::WithSpan;
@@ -56,7 +56,8 @@ mod tests {
                 .collect(),
         );
 
-        term::emit(&mut writer.lock(), &config, &files, &diagnostic).expect("cannot write error");
+        /* term::emit(&mut writer.lock(), &config, &files, &diagnostic).expect("cannot write error"); */
+        emit_to_io_write(&mut writer.lock(), &config, &files, &diagnostic).expect("cannot write error");
     }
 
     #[test]

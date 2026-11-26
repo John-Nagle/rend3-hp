@@ -555,7 +555,7 @@ pub async fn create_iad(
             let features = adapter.features();
             let potential = PotentialAdapter::new(adapter, info, limits, features, desired_profile);
 
-            log::info!("{:?} Adapter {}: {:#?}", backend, idx, potential.as_ref().map(|p| &p.info));
+            log::debug!("{:?} Adapter {}: {:#?}", backend, idx, potential.as_ref().map(|p| &p.info));
 
             let desired = if let Some(ref desired_device) = desired_device {
                 potential.as_ref().map(|i| i.info.name.to_lowercase().contains(desired_device)).unwrap_or(false)
