@@ -1,9 +1,9 @@
 use std::{path::Path, sync::Arc};
-
+use image::{Rgba};
 use anyhow::Context;
 use glam::UVec2;
 use rend3_framework::{App, DefaultRoutines, Mutex, RedrawContext, SetupContext};
-use rend3_test::{compare_image_to_path, download_image};
+use rend3_test::{compare_image_to_path, download_image, composite_onto_background_color};
 
 pub struct TestConfiguration<A> {
     pub app: A,
@@ -79,7 +79,8 @@ pub async fn test_app<A: App<T>, T: 'static>(mut config: TestConfiguration<A>) -
     });
 
     let image = download_image(&renderer, texture, config.size).await.unwrap();
-
+    //  Fill image background with black
+    let image = composite_onto_background_color(&image, Rgba([0, 0, 0, 255]));
     compare_image_to_path(&image, Path::new(config.reference_path), config.threshold_set)
         .context(config.reference_path) // Location of reference image
         .unwrap();

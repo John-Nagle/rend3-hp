@@ -166,7 +166,6 @@ impl TestRunner {
 
     pub async fn render_frame(&self, settings: FrameRenderSettings) -> Result<image::RgbaImage> {
         let texture = self.process_events(settings.clone());
-
         download_image(&self.renderer, texture, UVec2::splat(settings.size)).await
     }
 
@@ -177,7 +176,6 @@ impl TestRunner {
         threshold: impl Into<ThresholdSet>,
     ) -> Result<()> {
         let test_rgba = self.render_frame(settings).await?;
-
         compare_image_to_path(&test_rgba, path.as_ref(), threshold)
     }
 }
@@ -224,12 +222,23 @@ pub async fn download_image(
     let mapping = buffer.slice(..).get_mapped_range();
 
     //  This is a RGBA image and may contain transparent holes.
-    let img = image::RgbaImage::from_raw(size.x, size.y, mapping?.to_vec()).context("Failed to create image from mapping")?;
+    let img = image::RgbaImage::from_raw(size.x, size.y, mapping?.to_vec()).context("Failed to create image from mapping");
+/*
     //  So we composite it onto a black background.
     let black_opaque = Rgba([0, 0, 0, 255]);
     let mut composite = image::RgbaImage::from_pixel(img.width(), img.height(), black_opaque);
     overlay(&mut composite, &img, 0, 0);
     Ok(composite)
+*/
+    img
+}
+
+/// Composite onto background color.
+/// Prevents alpha transparency from showing through.
+pub fn composite_onto_background_color(img: &image::RgbaImage, background_color: Rgba<u8>) -> image::RgbaImage {
+    let mut composite = image::RgbaImage::from_pixel(img.width(), img.height(), background_color);
+    overlay(&mut composite, img, 0, 0);
+    composite
 }
 
 pub fn compare_image_to_path(
